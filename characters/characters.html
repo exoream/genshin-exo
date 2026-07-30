@@ -72,6 +72,10 @@ input[type=number]{-moz-appearance:textfield}
 .wp-r .wp-d .dr{font-weight:700;color:var(--accent);font-size:11px;margin-left:1px;flex-shrink:0}
 .wp-r .wp-d select{min-width:0;font-size:10px;padding:3px 4px;flex:1 1 auto;width:auto}
 
+.tl-g{display:flex;align-items:center;gap:10px;width:100%}
+.tl-t-lg{width:48px;height:48px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:18px;color:var(--text-muted)}
+.tl-t-lg img{width:100%;height:100%;object-fit:cover}
+.tl-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .tl-hdr{display:flex;align-items:center;gap:6px}
 .tl-hdr select{font-size:11px;min-width:120px;flex:1}
 .tl-3{display:flex;gap:6px;margin-top:6px}
@@ -312,13 +316,16 @@ function renderCharacters(){
         // ── Talents ──
         h+='<div class="msec">'+
           '<div class="ms-h">📖 Talents</div>'+
-            '<div class="tl-hdr">'+
-              '<select class="form-control form-control-sm" data-field="talentId">'+tlOpts(c.talentId)+'</select>'+
-            '</div>'+
-            '<div class="tl-3">'+
-              '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentBasic||1)+'" data-field="talentBasic"></div><div class="t3l">Basic</div></div>'+
-              '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentSkill||1)+'" data-field="talentSkill"></div><div class="t3l">Skill</div></div>'+
-              '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentBurst||1)+'" data-field="talentBurst"></div><div class="t3l">Burst</div></div>'+
+            '<div class="tl-g">'+
+              '<div class="tl-t-lg">'+(tl&&tl.image?'<img src="'+esc(tl.image)+'" alt="">':(tl?'📖':'?'))+'</div>'+
+              '<div class="tl-r">'+
+                '<div class="tl-hdr"><select class="form-control form-control-sm" data-field="talentId">'+tlOpts(c.talentId)+'</select></div>'+
+                '<div class="tl-3">'+
+                  '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentBasic||1)+'" data-field="talentBasic"></div><div class="t3l">Basic</div></div>'+
+                  '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentSkill||1)+'" data-field="talentSkill"></div><div class="t3l">Skill</div></div>'+
+                  '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentBurst||1)+'" data-field="talentBurst"></div><div class="t3l">Burst</div></div>'+
+                '</div>'+
+              '</div>'+
             '</div></div>';
 
         // ── Artifacts (simplified: set only) ──

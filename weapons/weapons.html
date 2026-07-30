@@ -67,16 +67,18 @@
           </select>
         </div>
         <div class="form-group full">
-          <label>Stats</label>
-          <div class="stats-grid">
-            <div class="form-group"><label>ATK%</label><input class="form-control" type="number" step="0.1" min="0" id="sAtk" placeholder="0" value="0"></div>
-            <div class="form-group"><label>CRIT DMG%</label><input class="form-control" type="number" step="0.1" min="0" id="sCdmg" placeholder="0" value="0"></div>
-            <div class="form-group"><label>CRIT RATE%</label><input class="form-control" type="number" step="0.1" min="0" id="sCrate" placeholder="0" value="0"></div>
-            <div class="form-group"><label>HP%</label><input class="form-control" type="number" step="0.1" min="0" id="sHp" placeholder="0" value="0"></div>
-            <div class="form-group"><label>Energy Recharge%</label><input class="form-control" type="number" step="0.1" min="0" id="sEr" placeholder="0" value="0"></div>
-            <div class="form-group"><label>Elemental Mastery</label><input class="form-control" type="number" step="0.1" min="0" id="sEm" placeholder="0" value="0"></div>
-            <div class="form-group"><label>DEF%</label><input class="form-control" type="number" step="0.1" min="0" id="sDef" placeholder="0" value="0"></div>
-          </div>
+          <label>Main Stat</label>
+          <select class="form-control" id="fStatType">
+            <option value="">-- Select Stat --</option>
+            <option>ATK%</option>
+            <option>HP%</option>
+            <option>DEF%</option>
+            <option>CRIT Rate%</option>
+            <option>CRIT DMG%</option>
+            <option>Energy Recharge%</option>
+            <option>Elemental Mastery</option>
+            <option>Physical DMG%</option>
+          </select>
         </div>
       </div>
       <div style="margin-top:14px;display:flex;gap:8px;">
@@ -118,15 +120,7 @@ function g(){ return {
   name: document.getElementById("fName").value.trim(),
   image: document.getElementById("fImage").value.trim(),
   materialId: document.getElementById("fMaterialId").value,
-  stats: {
-    atk: parseFloat(document.getElementById("sAtk").value)||0,
-    critDmg: parseFloat(document.getElementById("sCdmg").value)||0,
-    critRate: parseFloat(document.getElementById("sCrate").value)||0,
-    hp: parseFloat(document.getElementById("sHp").value)||0,
-    energyRecharge: parseFloat(document.getElementById("sEr").value)||0,
-    elementalMastery: parseFloat(document.getElementById("sEm").value)||0,
-    defense: parseFloat(document.getElementById("sDef").value)||0
-  }
+  statType: document.getElementById("fStatType").value
 };}
 function v(d){
   if(!d.name){ alert("Weapon name is required!"); return false; }
@@ -137,7 +131,7 @@ function reset(){
   document.getElementById("fName").value="";
   document.getElementById("fImage").value="";
   document.getElementById("fMaterialId").value="";
-  ["sAtk","sCdmg","sCrate","sHp","sEr","sEm","sDef"].forEach(function(id){ document.getElementById(id).value="0"; });
+  document.getElementById("fStatType").value="";
   document.getElementById("formTitle").textContent="Add Weapon";
   document.getElementById("saveBtn").textContent="Save";
   document.getElementById("cancelBtn").style.display="none";
@@ -148,14 +142,7 @@ function fill(t){
   document.getElementById("fName").value=t.name;
   document.getElementById("fImage").value=t.image||"";
   document.getElementById("fMaterialId").value=t.materialId||"";
-  var s=t.stats||{};
-  document.getElementById("sAtk").value=s.atk||0;
-  document.getElementById("sCdmg").value=s.critDmg||0;
-  document.getElementById("sCrate").value=s.critRate||0;
-  document.getElementById("sHp").value=s.hp||0;
-  document.getElementById("sEr").value=s.energyRecharge||0;
-  document.getElementById("sEm").value=s.elementalMastery||0;
-  document.getElementById("sDef").value=s.defense||0;
+  document.getElementById("fStatType").value=t.statType||"";
   document.getElementById("formTitle").textContent="Edit Weapon";
   document.getElementById("saveBtn").textContent="Update";
   document.getElementById("cancelBtn").style.display="inline-block";
@@ -190,16 +177,7 @@ function render(){
     var h='<div class="table-wrap"><table><thead><tr><th style="width:8%">Img</th><th style="width:18%">Name</th><th style="width:38%">Stats</th><th style="width:10%">Mat</th><th style="width:18%">Actions</th></tr></thead><tbody>';
     for(var i=0;i<filtered.length;i++){
       var t=filtered[i];
-      var s=t.stats||{};
-      var sa=[];
-      if(s.atk) sa.push("ATK "+s.atk+"%");
-      if(s.critDmg) sa.push("CDMG "+s.critDmg+"%");
-      if(s.critRate) sa.push("CRate "+s.critRate+"%");
-      if(s.hp) sa.push("HP "+s.hp+"%");
-      if(s.energyRecharge) sa.push("ER "+s.energyRecharge+"%");
-      if(s.elementalMastery) sa.push("EM "+s.elementalMastery);
-      if(s.defense) sa.push("DEF "+s.defense+"%");
-      var st=sa.length?sa.join(", "):'<span style="color:var(--text-muted)">—</span>';
+      var st=t.statType ? '<span style="color:var(--accent);font-weight:600;">'+esc(t.statType)+'</span>' : '<span style="color:var(--text-muted)">—</span>';
       var mat=mats.find(function(m){return m.id===t.materialId;});
       h+='<tr>';
       h+='<td><div style="position:relative;display:inline-block"><span class="img-thumb" data-id="'+t.id+'" data-collection="weapons" data-image="'+(t.image||'')+'" style="cursor:pointer">'+(t.image?'<img src="'+t.image+'" alt="">':'?')+'</span><button class="img-upload-trigger" data-id="'+t.id+'" data-collection="weapons" style="position:absolute;bottom:-4px;right:-4px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg,#080c1a);background:var(--accent);color:#000;font-size:10px;line-height:12px;text-align:center;padding:0;cursor:pointer;font-weight:700">+</button></div></td>';
