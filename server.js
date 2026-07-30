@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const archiver = require('archiver');
 
 // Load .env
 var envPath = path.join(__dirname, '.env');
@@ -244,6 +245,53 @@ var server = http.createServer(function(req, res){
 
   if(pathname === '/api/upload'){
     handleUpload(req, res);
+    return;
+  }
+
+  if(pathname.startsWith('/api/download/') && req.method === 'GET'){
+    if(!isAuthenticated(req)){
+      sendJSON(res, 401, { error: 'Unauthorized' });
+      return;
+    }
+    var downloadParts = pathname.split('/');
+    var source = downloadParts[3];
+    var filename = downloadParts.slice(4).join('/');
+    if(!source || (source !== 'data' && source !== 'uploads')){
+      sendJSON(res, 400, { error: 'Invalid download path' });
+      return;
+    }
+    var baseDir = source === 'data' ? DATA_DIR : UPLOAD_DIR;
+
+    // Download entire folder as zip
+    if(!filename){
+      var archive = archiver('zip', { zlib: { level: 9 } });
+      res.writeHead(200, {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': 'attachment; filename="' + source + '.zip"'
+      });
+      archive.pipe(res);
+      archive.directory(baseDir, false);
+      archive.finalize();
+      return;
+    }
+
+    // Download individual file
+    var filepath = path.join(baseDir, filename);
+    if(!filepath.startsWith(baseDir)){
+      sendJSON(res, 403, { error: 'Forbidden' });
+      return;
+    }
+    fs.readFile(filepath, function(err, content){
+      if(err){
+        sendJSON(res, 404, { error: 'File not found' });
+        return;
+      }
+      res.writeHead(200, {
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': 'attachment; filename="' + filename.split('/').pop() + '"'
+      });
+      res.end(content);
+    });
     return;
   }
 

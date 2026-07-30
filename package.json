@@ -1,0 +1,24 @@
+{
+  "name": "genshin-impact-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exoream/genshin-exo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/exoream/genshin-exo/issues"
+  },
+  "homepage": "https://github.com/exoream/genshin-exo#readme",
+  "dependencies": {
+    "archiver": "^8.0.0"
+  }
+}
