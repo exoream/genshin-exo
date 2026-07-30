@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const archiver = require('archiver');
+const { ZipArchive } = require('archiver');
 
 // Load .env
 var envPath = path.join(__dirname, '.env');
@@ -264,7 +264,7 @@ var server = http.createServer(function(req, res){
 
     // Download entire folder as zip
     if(!filename){
-      var archive = archiver('zip', { zlib: { level: 9 } });
+      var archive = new ZipArchive();
       res.writeHead(200, {
         'Content-Type': 'application/zip',
         'Content-Disposition': 'attachment; filename="' + source + '.zip"'
