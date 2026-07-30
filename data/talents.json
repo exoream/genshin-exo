@@ -1,0 +1,156 @@
+[
+    {
+        "id":  "mzqzzdhhztetnw",
+        "name":  "Admonition",
+        "domain":  "Steeple of Ignorance",
+        "region":  "Sumeru",
+        "days":  [
+                     1,
+                     4
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "odu5mwm3ytgtnz",
+        "name":  "Ballad",
+        "domain":  "Forsaken Rift",
+        "region":  "Mondstadt",
+        "days":  [
+                     3,
+                     6
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "ngu5ytjlotatow",
+        "name":  "Diligence",
+        "domain":  "Taishan Mansion",
+        "region":  "Liyue",
+        "days":  [
+                     2,
+                     5
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "ngq0nmm2y2qtyj",
+        "name":  "Elegance",
+        "domain":  "Violet Court",
+        "region":  "Inazuma",
+        "days":  [
+                     2,
+                     5
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "ote2yjexodatnz",
+        "name":  "Freedom",
+        "domain":  "Forsaken Rift",
+        "region":  "Mondstadt",
+        "days":  [
+                     1,
+                     4
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "nzbingu0njktnj",
+        "name":  "Gold",
+        "domain":  "Taishan Mansion",
+        "region":  "Liyue",
+        "days":  [
+                     3,
+                     6
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "ztiyzte3ntetot",
+        "name":  "Ingenuity",
+        "domain":  "Steeple of Ignorance",
+        "region":  "Sumeru",
+        "days":  [
+                     2,
+                     5
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "njg0ztaxyzetnm",
+        "name":  "Justice",
+        "domain":  "Pale Forgotten Glory",
+        "region":  "Fontaine",
+        "days":  [
+                     2,
+                     5
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "nwzlm2exowmtnz",
+        "name":  "Light",
+        "domain":  "Violet Court",
+        "region":  "Inazuma",
+        "days":  [
+                     3,
+                     6
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "owewzjg5mgutzd",
+        "name":  "Order",
+        "domain":  "Pale Forgotten Glory",
+        "region":  "Fontaine",
+        "days":  [
+                     1,
+                     4
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "ymu5ztc2ogetow",
+        "name":  "Praxis",
+        "domain":  "Steeple of Ignorance",
+        "region":  "Sumeru",
+        "days":  [
+                     3,
+                     6
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "y2izoteyztitzt",
+        "name":  "Prosperity",
+        "domain":  "Taishan Mansion",
+        "region":  "Liyue",
+        "days":  [
+                     1,
+                     4
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "ndhhmgnkowqtzd",
+        "name":  "Resistance",
+        "domain":  "Forsaken Rift",
+        "region":  "Mondstadt",
+        "days":  [
+                     2,
+                     5
+                 ],
+        "image":  ""
+    },
+    {
+        "id":  "ytiwmjrjnzitmd",
+        "name":  "Transience",
+        "domain":  "Violet Court",
+        "region":  "Inazuma",
+        "days":  [
+                     1,
+                     4
+                 ],
+        "image":  ""
+    }
+]

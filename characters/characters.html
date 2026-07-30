@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adventurer's Log — Characters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.filter-bar .summary{font-size:12px;color:var(--text-dim);margin-left:auto}
+.filter-bar .summary b{color:var(--accent)}
+
+.char-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:28px}
+
+.char-card{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.char-card:hover{border-color:rgba(212,168,67,0.2);box-shadow:0 2px 16px rgba(212,168,67,0.06)}
+
+/* ── LEFT IMAGE PANEL ── */
+.char-head{width:240px;flex-shrink:0;position:relative;background:var(--surface-2);display:flex;flex-direction:column;padding:0;border-bottom:none;overflow:hidden}
+.av-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.char-avatar{width:100%;height:100%;border-radius:0;border:none;background:var(--surface-2);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:48px;font-weight:700;color:var(--accent);cursor:pointer;transition:transform .3s}
+.char-avatar:hover{transform:scale(1.05)}
+.char-avatar img{width:100%;height:100%;object-fit:cover}
+.av-up{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(15,21,40,0.7);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(212,168,67,0.3);transition:.15s;line-height:1;z-index:2;backdrop-filter:blur(4px)}
+.av-up:hover{transform:scale(1.15);background:var(--accent);color:#0f1528}
+
+.hd-body{position:absolute;bottom:0;left:0;right:0;padding:32px 10px 10px;background:linear-gradient(transparent,rgba(8,12,26,0.92));display:flex;flex-direction:column;gap:4px;z-index:1}
+.hd-top .nm-inp{font-size:15px;font-weight:700;padding:3px 7px;background:rgba(0,0,0,0.3);border:1px solid transparent;border-radius:4px;color:#fff;font-family:inherit;width:100%;transition:.15s}
+.hd-top .nm-inp:hover{border-color:rgba(255,255,255,0.15)}
+.hd-top .nm-inp:focus{border-color:var(--accent);outline:none;background:rgba(0,0,0,0.5)}
+.hd-bot{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.hd-bot .rg-sel{font-size:11px;color:rgba(255,255,255,0.7);background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:3px 22px 3px 5px;font-family:inherit;cursor:pointer;flex:1 1 auto;min-width:0}
+.hd-bot .lv-dsp{display:flex;align-items:center;gap:3px;font-size:11px;color:rgba(255,255,255,0.7);white-space:nowrap;flex-shrink:0}
+.hd-bot .lv-dsp input{width:40px;font-size:14px;font-weight:700;color:var(--accent);text-align:center;background:rgba(0,0,0,0.4);border:1px solid rgba(212,168,67,0.2);border-radius:3px;padding:2px 3px;font-family:inherit}
+.hd-bot .lv-dsp input:focus{outline:none;border-color:var(--accent)}
+.hd-bot .st-sel{font-size:11px;color:rgba(255,255,255,0.6);background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:3px 22px 3px 5px;font-family:inherit;cursor:pointer;flex:1 1 auto;min-width:0}
+
+.st-badge{position:absolute;top:8px;left:8px;z-index:2;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;transition:.15s;border:1px solid transparent;font-family:var(--font-body);text-transform:capitalize;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-shadow:0 0 6px rgba(0,0,0,0.8);min-width:114px}
+.st-badge.c{background:rgba(8,12,26,0.85);color:#34d399;border-color:rgba(52,211,153,0.5)}
+.st-badge.p{background:rgba(8,12,26,0.85);color:#fbbf24;border-color:rgba(251,191,36,0.5)}
+.st-badge.n{background:rgba(8,12,26,0.85);color:#8891b0;border-color:rgba(136,145,176,0.3)}
+.st-badge .dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.st-badge.c .dot{background:var(--success)}
+.st-badge.p .dot{background:var(--warning)}
+.st-badge.n .dot{background:var(--text-muted)}
+.st-badge:hover{transform:scale(1.05)}
+
+.farm-i{position:absolute;top:8px;left:124px;z-index:2;display:flex;align-items:center;gap:4px;padding:7px 14px;background:rgba(8,12,26,0.85);border-radius:20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08)}
+.farm-i .fi{font-size:12px;cursor:default;line-height:1;transition:.12s}
+.farm-i .fi:hover{transform:scale(1.2)}
+
+/* ── RIGHT CONTENT PANEL ── */
+.char-body{flex:1;padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden;min-width:0}
+
+/* ── MINI SECTION ── */
+.msec{border:1px solid rgba(37,45,74,0.35);border-radius:6px;padding:8px 10px;background:rgba(15,21,40,0.3)}
+.msec .ms-h{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+
+.wp-g{display:flex;align-items:center;gap:10px;width:100%}
+.wp-t-lg{width:48px;height:48px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:18px;color:var(--text-muted)}
+.wp-t-lg img{width:100%;height:100%;object-fit:cover}
+.wp-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.wp-r .wp-s select{font-size:12px;font-weight:600;min-width:0;width:100%}
+.wp-r .wp-d{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.wp-r .wp-d .dl{font-size:11px;color:var(--text-dim);font-weight:500;flex-shrink:0}
+.wp-r .wp-d input[type=number]{width:32px;text-align:center;font-size:11px;padding:3px 2px;height:auto;flex-shrink:0}
+.wp-r .wp-d .dr{font-weight:700;color:var(--accent);font-size:11px;margin-left:1px;flex-shrink:0}
+.wp-r .wp-d select{min-width:0;font-size:10px;padding:3px 4px;flex:1 1 auto;width:auto}
+
+.tl-hdr{display:flex;align-items:center;gap:6px}
+.tl-hdr select{font-size:11px;min-width:120px;flex:1}
+.tl-3{display:flex;gap:6px;margin-top:6px}
+.tl-3 .t3{flex:1;text-align:center;background:rgba(212,168,67,0.03);border:1px solid rgba(212,168,67,0.1);border-radius:5px;padding:5px 4px}
+.tl-3 .t3 .t3n{font-size:15px;font-weight:700;color:var(--accent);line-height:1.2}
+.tl-3 .t3 .t3n input{font-size:15px;font-weight:700;color:var(--accent);width:28px;text-align:center;background:transparent;border:none;padding:1px;font-family:inherit}
+.tl-3 .t3 .t3n input:focus{outline:none}
+.tl-3 .t3 .t3l{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+
+.sec-h{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.alist{display:flex;flex-direction:column;gap:3px}
+.aitem{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--border);border-radius:4px;font-size:11px}
+.aitem .ai-s{font-weight:700;color:var(--accent);text-transform:uppercase;font-size:9px;letter-spacing:.05em;min-width:38px}
+.aitem .ai-d{flex:1}
+.aitem .ai-d select{width:100%;min-width:100px;font-size:11px}
+
+.del-ft{display:flex;justify-content:flex-end;padding-top:8px;border-top:1px solid rgba(37,45,74,0.2)}
+
+.region-header{margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.region-header h2{font-family:var(--font-heading);font-size:16px;letter-spacing:.05em;color:var(--accent);text-transform:uppercase;margin:0}
+.region-header .count{font-size:11px;color:var(--text-dim);margin-left:8px}
+
+.region-mgr-btn{font-size:11px;padding:3px 10px;cursor:pointer;color:var(--text-dim);background:none;border:1px dashed var(--border);border-radius:4px;margin-left:6px;transition:.15s;font-family:var(--font-body)}
+.region-mgr-btn:hover{color:var(--accent);border-color:var(--accent)}
+.rm-list{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.rm-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px}
+.rm-item .rm-del{background:none;border:none;color:var(--danger);cursor:pointer;font-size:15px;padding:0 4px;line-height:1}
+.rm-item .rm-del:hover{color:#fca5a5}
+.rm-add{display:flex;gap:8px}
+.rm-add input{flex:1}
+
+@media(max-width:1180px){.char-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.char-card{flex-direction:column}.char-head{width:100%;min-height:260px}.tl-3{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<nav class="main-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-brand">✦ Adventurer's Log</a>
+    <div class="nav-links">
+      <a href="../index.html">Dashboard</a>
+      <a href="../talents/talents.html">Talents</a>
+      <a href="../weapon-materials/weapon-materials.html">Weapon Mats</a>
+      <a href="../artifacts/artifacts.html">Artifacts</a>
+      <a href="../weapons/weapons.html">Weapons</a>
+      <a href="../characters/characters.html" class="active">Characters</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1>Characters</h1>
+      <p>Track character level, weapon, talents, artifacts.</p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-primary" id="addBtn">+ Add Character</button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="seg-group" id="todayFilter">
+      <button data-f="off">All</button>
+      <button data-f="on" class="on">Today</button>
+    </div>
+    <div class="seg-group" id="statusFilter">
+      <button data-f="all">All</button>
+      <button data-f="completed">Completed</button>
+      <button data-f="progress">Progress</button>
+      <button data-f="not_started">Not Started</button>
+    </div>
+    <select class="form-control" id="regionFilter" style="width:auto;min-width:140px;">
+      <option value="all">All Regions</option>
+    </select>
+    <button class="region-mgr-btn" id="regionMgrBtn">🛠 Manage</button>
+    <span class="summary" id="summaryText"></span>
+  </div>
+
+  <div id="charContainer"></div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+
+<div class="modal-overlay" id="regionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Manage Regions</h2>
+      <button class="modal-close" id="regionModalClose">&times;</button>
+    </div>
+    <div class="rm-add">
+      <input class="form-control" id="newRegionInput" placeholder="New region name">
+      <button class="btn btn-primary" id="addRegionBtn">Add</button>
+    </div>
+    <div class="rm-list" id="regionList"></div>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script>
+var regionsNames = []; var regionsData = [];
+var ASC_STATS = ["ATK%","HP%","DEF%","CRIT Rate%","CRIT DMG%","Energy Recharge%","Elemental Mastery","Healing Bonus%","Physical DMG%"];
+var ART_SLOTS = [
+  {key:"flower",label:"Flower"},
+  {key:"plume",label:"Plume"},
+  {key:"sands",label:"Sands"},
+  {key:"goblet",label:"Goblet"},
+  {key:"circlet",label:"Circlet"}
+];
+var filterStatus="all", filterRegion="all", filterToday=true;
+var ST_OPTS = ["not_started","progress","completed"];
+var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+function newChar(d){
+  var o={name:d.name||"",image:d.image||"",region:d.region||(regionsNames[0]||""),level:d.level||1,
+    ascStatType:d.ascStatType||"",
+    weaponId:d.weaponId||"",weaponLevel:d.weaponLevel||1,weaponRefinement:d.weaponRefinement||1,weaponStatus:d.weaponStatus||"not_started",
+    talentId:d.talentId||"",talentBasic:d.talentBasic||1,talentSkill:d.talentSkill||1,talentBurst:d.talentBurst||1,
+    status:d.status||"not_started"};
+  ART_SLOTS.forEach(function(s){ o["artSet_"+s.key]=""; });
+  return o;
+}
+
+function isComplete(c){
+  return c.status==="completed";
+}
+
+function esc(s){ return (s||"").replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];}); }
+
+function selOpts(v,list){ return list.map(function(o){return '<option'+(v===o?' selected':'')+'>'+o+'</option>';}).join(''); }
+
+function statusLabel(s){s=s||"not_started";return s.replace(/_/g,' ').replace(/^./,function(c){return c.toUpperCase();});}
+
+function isFarmableToday(c, wpc, tlc, wmc){
+  if(isComplete(c)) return false;
+  if(c.talentId){
+    var tl=tlc.find(function(x){return x.id===c.talentId;});
+    if(tl && tl.days && tl.days.indexOf(today)!==-1) return true;
+  }
+  if(c.weaponId){
+    var wp=wpc.find(function(x){return x.id===c.weaponId;});
+    if(wp && wp.materialId){
+      var wm=wmc.find(function(x){return x.id===wp.materialId;});
+      if(wm && wm.days && wm.days.indexOf(today)!==-1) return true;
+    }
+  }
+  return false;
+}
+
+var today = new Date().getDay();
+
+function renderCharacters(){
+  Promise.all([getAll("characters"),getAll("weapons"),getAll("talents"),getAll("artifacts"),getAll("weapon-materials")]).then(function(r){
+    var all=r[0], wpc=r[1], tlc=r[2], afc=r[3], wmc=r[4];
+    var container=document.getElementById("charContainer");
+    container.innerHTML="";
+    var visible=[];
+    for(var i=0;i<all.length;i++){
+      var c=all[i];
+      if(filterStatus==="completed"&&c.status!=="completed") continue;
+      if(filterStatus==="progress"&&c.status!=="progress") continue;
+      if(filterStatus==="not_started"&&c.status!=="not_started") continue;
+      if(filterRegion!=="all"&&c.region!==filterRegion) continue;
+      if(filterToday && !isFarmableToday(c, wpc, tlc, wmc)) continue;
+      visible.push(c);
+    }
+    var dc=0; for(var i=0;i<all.length;i++){if(isComplete(all[i]))dc++;}
+    document.getElementById("summaryText").innerHTML="<b>"+dc+"</b> / "+all.length+" completed";
+
+    if(visible.length===0){container.innerHTML='<div class="empty-state"><span class="empty-icon">👤</span>No characters found.</div>';return;}
+
+    function wpOpts(sel){var h='<option value="">-- None --</option>';for(var i=0;i<wpc.length;i++){h+='<option value="'+wpc[i].id+'"'+(wpc[i].id===sel?' selected':'')+'>'+esc(wpc[i].name)+'</option>';}return h;}
+    function tlOpts(sel){var h='<option value="">-- None --</option>';for(var i=0;i<tlc.length;i++){h+='<option value="'+tlc[i].id+'"'+(tlc[i].id===sel?' selected':'')+'>'+esc(tlc[i].name)+' ('+esc(tlc[i].region)+')</option>';}return h;}
+    function afOpts(sel){var h='<option value="">-- None --</option>';for(var i=0;i<afc.length;i++){h+='<option value="'+afc[i].id+'"'+(afc[i].id===sel?' selected':'')+'>'+esc(afc[i].name)+'</option>';}return h;}
+
+    for(var ri=0;ri<regionsNames.length;ri++){
+      var region=regionsNames[ri];
+      var list=[]; for(var i=0;i<visible.length;i++){if(visible[i].region===region)list.push(visible[i]);}
+      if(list.length===0)continue;
+      var rh=document.createElement("div");rh.className="region-header";rh.innerHTML='<h2>'+region+' <span class="count">'+list.length+'</span></h2>';container.appendChild(rh);
+      var grid=document.createElement("div");grid.className="char-grid";
+
+      for(var i=0;i<list.length;i++){
+        let c=list[i];
+        var wp=wpc.find(function(x){return x.id===c.weaponId;});
+        var tl=tlc.find(function(x){return x.id===c.talentId;});
+        var stCls=c.status==="completed"?"c":c.status==="progress"?"p":"n";
+        var tlToday=c.talentId && tl && tl.days && tl.days.indexOf(today)!==-1;
+        var wpToday=c.weaponId && wp && wp.materialId && (function(){var wm=wmc.find(function(x){return x.id===wp.materialId;});return wm&&wm.days&&wm.days.indexOf(today)!==-1;})();
+
+        var card=document.createElement("div");card.className="char-card";
+        var h='<div class="char-head">'+
+          '<div class="av-wrap">'+
+            '<div class="char-avatar">'+(c.image?'<img src="'+esc(c.image)+'" alt="">':esc(c.name).charAt(0).toUpperCase()||'?')+'</div>'+
+            '<div class="av-up" title="Upload image">+</div>'+
+          '</div>'+
+          '<div class="hd-body">'+
+            '<div class="hd-top">'+
+              '<input class="nm-inp" type="text" value="'+esc(c.name)+'" placeholder="Name" data-field="name">'+
+            '</div>'+
+            '<div class="hd-bot">'+
+              '<select class="rg-sel" data-field="region">'+regionsNames.map(function(r2){return '<option'+(c.region===r2?' selected':'')+'>'+r2+'</option>';}).join('')+'</select>'+
+              '<select class="st-sel" data-field="ascStatType"><option value="">—</option>'+selOpts(c.ascStatType,ASC_STATS)+'</select>'+
+              '<span class="lv-dsp">Lv <input type="number" min="1" max="100" value="'+c.level+'" data-field="level"></span>'+
+            '</div>'+
+          '</div>'+
+          '<button class="st-badge '+stCls+'"><span class="dot"></span><span>'+statusLabel(c.status)+'</span></button>'+
+          (tlToday||wpToday?'<span class="farm-i">':'')+
+          (tlToday?'<span class="fi fi-t" title="Talent available today">📖</span>':'')+
+          (wpToday?'<span class="fi fi-w" title="Weapon material available today">⚔️</span>':'')+
+          (tlToday||wpToday?'</span>':'')+
+        '</div>';
+
+        h+='<div class="char-body">';
+
+        // ── Weapon (big image left, details right) ──
+        h+='<div class="msec">'+
+          '<div class="ms-h">⚔️ Weapon</div>'+
+          '<div class="wp-g">'+
+            '<div class="wp-t-lg">'+(wp&&wp.image?'<img src="'+esc(wp.image)+'" alt="">':(wp?'⚔️':'?'))+'</div>'+
+            '<div class="wp-r">'+
+              '<div class="wp-s"><select class="form-control form-control-sm" data-field="weaponId">'+wpOpts(c.weaponId)+'</select></div>'+
+              '<div class="wp-d">'+
+                '<span class="dl">Lv.</span><input class="form-control form-control-sm" type="number" min="1" max="90" value="'+c.weaponLevel+'" data-field="weaponLevel">'+
+                '<span class="dr">R</span><input class="form-control form-control-sm" type="number" min="1" max="5" value="'+c.weaponRefinement+'" data-field="weaponRefinement">'+
+                '<select class="form-control form-control-sm" data-field="weaponStatus">'+
+                  '<option value="not_started"'+(c.weaponStatus==='not_started'?' selected':'')+'>Not Started</option>'+
+                  '<option value="progress"'+(c.weaponStatus==='progress'?' selected':'')+'>In Progress</option>'+
+                  '<option value="completed"'+(c.weaponStatus==='completed'?' selected':'')+'>Completed</option>'+
+                '</select>'+
+              '</div>'+
+            '</div>'+
+          '</div></div>';
+
+        // ── Talents ──
+        h+='<div class="msec">'+
+          '<div class="ms-h">📖 Talents</div>'+
+            '<div class="tl-hdr">'+
+              '<select class="form-control form-control-sm" data-field="talentId">'+tlOpts(c.talentId)+'</select>'+
+            '</div>'+
+            '<div class="tl-3">'+
+              '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentBasic||1)+'" data-field="talentBasic"></div><div class="t3l">Basic</div></div>'+
+              '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentSkill||1)+'" data-field="talentSkill"></div><div class="t3l">Skill</div></div>'+
+              '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentBurst||1)+'" data-field="talentBurst"></div><div class="t3l">Burst</div></div>'+
+            '</div></div>';
+
+        // ── Artifacts (simplified: set only) ──
+        h+='<div class="sec-h">💠 Artifacts</div><div class="alist">';
+        ART_SLOTS.forEach(function(slot){
+          var sk=slot.key;
+          h+='<div class="aitem">'+
+            '<span class="ai-s">'+slot.label+'</span>'+
+            '<span class="ai-d"><select class="form-control form-control-sm" data-field="artSet_'+sk+'">'+afOpts(c["artSet_"+sk])+'</select></span>'+
+          '</div>';
+        });
+        h+='</div>';
+
+        h+='<div class="del-ft"><button class="btn btn-danger btn-sm del-btn">Delete</button></div>';
+        h+='</div>';
+
+        card.innerHTML=h;
+
+        // Avatar → URL prompt
+        card.querySelector(".char-avatar").addEventListener("click",function(){
+          var url=prompt("Image URL:", c.image||"");
+          if(url===null) return;
+          saveImg(c,url);
+        });
+        // Upload button
+        card.querySelector(".av-up").addEventListener("click",function(e){
+          e.stopPropagation();
+          var inp=document.getElementById("fileInput");
+          inp.value="";
+          inp.onchange=function(){
+            var file=inp.files[0];
+            if(!file) return;
+            var reader=new FileReader();
+            reader.onload=function(ev){
+              fetch("/api/upload",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:ev.target.result,name:file.name})})
+                .then(function(r){return r.json();})
+                .then(function(resp){if(resp.url) saveImg(c,resp.url);});
+            };
+            reader.readAsDataURL(file);
+          };
+          inp.click();
+        });
+        function saveImg(cc,url){
+          cc.image=url;
+          var obj={}; ["name","image","region","level","ascStatType","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=cc[k];});
+          ART_SLOTS.forEach(function(slot){obj["artSet_"+slot.key]=cc["artSet_"+slot.key];});
+          update("characters",cc.id,obj).then(function(){renderCharacters();});
+        }
+
+        // Change events
+        card.querySelectorAll("[data-field]").forEach(function(el){
+          el.addEventListener("change",function(){
+            var f=el.dataset.field;
+            var v=el.value;
+            if(["level"].indexOf(f)!==-1) v=Math.max(1,Math.min(100,parseInt(v)||1));
+            if(["weaponLevel"].indexOf(f)!==-1) v=Math.max(1,Math.min(90,parseInt(v)||1));
+            if(["weaponRefinement"].indexOf(f)!==-1) v=Math.max(1,Math.min(5,parseInt(v)||1));
+            if(["talentBasic","talentSkill","talentBurst"].indexOf(f)!==-1) v=Math.max(1,Math.min(12,parseInt(v)||1));
+            c[f]=v;
+            var obj={};
+            ["name","image","region","level","ascStatType","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=c[k];});
+            ART_SLOTS.forEach(function(slot){obj["artSet_"+slot.key]=c["artSet_"+slot.key];});
+            update("characters",c.id,obj).then(function(){renderCharacters();});
+          });
+        });
+      
+        // Status toggle
+        card.querySelector(".st-badge").addEventListener("click",function(){
+          var order=["not_started","progress","completed"];
+          var idx=order.indexOf(c.status);
+          c.status=order[(idx+1)%3];
+          var obj={}; ["name","image","region","level","ascStatType","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=c[k];});
+          ART_SLOTS.forEach(function(slot){obj["artSet_"+slot.key]=c["artSet_"+slot.key];});
+          update("characters",c.id,obj).then(function(){renderCharacters();});
+        });
+
+        card.querySelector(".del-btn").addEventListener("click",function(){
+          if(!confirm("Delete "+c.name+"?")) return;
+          remove("characters",c.id).then(renderCharacters);
+        });
+
+        grid.appendChild(card);
+      }
+      container.appendChild(grid);
+    }
+  }).catch(function(e){ console.error(e); alert("Error loading data. Make sure the server is running."); });
+}
+
+function seedData(){
+  var seeds=[
+    {name:"",image:"",level:100,weaponLevel:90,weaponRefinement:5,weaponStatus:"completed",talentBasic:12,talentSkill:12,talentBurst:12,status:"completed"},
+    {name:"",image:"",level:80,weaponLevel:80,weaponRefinement:3,weaponStatus:"progress",talentBasic:7,talentSkill:7,talentBurst:7,status:"progress"},
+    {name:"",image:"",level:70,weaponLevel:70,weaponRefinement:2,weaponStatus:"progress",talentBasic:6,talentSkill:6,talentBurst:6,status:"progress"},
+    {name:"",image:"",level:60,weaponLevel:60,weaponRefinement:1,weaponStatus:"progress",talentBasic:4,talentSkill:4,talentBurst:4,status:"progress"},
+    {name:"",image:"",level:50,weaponLevel:50,weaponRefinement:1,weaponStatus:"progress",talentBasic:1,talentSkill:1,talentBurst:1,status:"progress"},
+    {name:"",image:"",level:50,weaponLevel:1,weaponRefinement:1,weaponStatus:"not_started",talentBasic:1,talentSkill:1,talentBurst:1,status:"not_started"},
+    {name:"",image:"",level:50,weaponLevel:20,weaponRefinement:1,weaponStatus:"progress",talentBasic:1,talentSkill:1,talentBurst:1,status:"progress"},
+    {name:"",image:"",level:40,weaponLevel:1,weaponRefinement:1,weaponStatus:"not_started",talentBasic:1,talentSkill:1,talentBurst:1,status:"not_started"},
+    {name:"",image:"",level:1,weaponLevel:1,weaponRefinement:1,weaponStatus:"not_started",talentBasic:1,talentSkill:1,talentBurst:1,status:"not_started"},
+    {name:"",image:"",level:1,weaponLevel:1,weaponRefinement:1,weaponStatus:"not_started",talentBasic:1,talentSkill:1,talentBurst:1,status:"not_started"}
+  ];
+  var idx = 0;
+  var chain=Promise.resolve();
+  seeds.forEach(function(s){
+    s.region = regionsNames[idx % regionsNames.length] || "";
+    idx++;
+    chain=chain.then(function(){return create("characters",newChar(s));});
+  });
+  return chain;
+}
+
+document.getElementById("todayFilter").addEventListener("click",function(e){
+  if(e.target.tagName!=="BUTTON") return;
+  filterToday=e.target.dataset.f==="on";
+  document.querySelectorAll("#todayFilter button").forEach(function(b){b.classList.remove("on");});
+  e.target.classList.add("on");
+  renderCharacters();
+});
+document.getElementById("statusFilter").addEventListener("click",function(e){
+  if(e.target.tagName!=="BUTTON") return;
+  filterStatus=e.target.dataset.f;
+  document.querySelectorAll("#statusFilter button").forEach(function(b){b.classList.remove("on");});
+  e.target.classList.add("on");
+  renderCharacters();
+});
+document.getElementById("regionFilter").addEventListener("change",function(e){filterRegion=e.target.value;renderCharacters();});
+document.getElementById("addBtn").addEventListener("click",function(){create("characters",newChar({})).then(renderCharacters);});
+
+function refreshRegionSelect(selected){
+  regionsToSelect(document.getElementById("regionFilter"), selected||filterRegion, true);
+}
+
+function renderRegionModal(){
+  loadRegions().then(function(r){
+    regionsData = r;
+    var list = document.getElementById("regionList");
+    list.innerHTML = '';
+    r.forEach(function(reg){
+      var div = document.createElement("div"); div.className = "rm-item";
+      div.innerHTML = '<span>'+reg.name+'</span><button class="rm-del" data-id="'+reg.id+'">&times;</button>';
+      list.appendChild(div);
+    });
+    document.querySelectorAll(".rm-del").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        if(!confirm("Delete region \""+btn.parentElement.querySelector("span").textContent+"\"?")) return;
+        remove("regions", btn.dataset.id).then(function(){
+          regionsCache = null;
+          loadRegions().then(function(r){
+            regionsNames = r.map(function(x){ return x.name; });
+            refreshRegionSelect(filterRegion);
+            renderCharacters();
+            renderRegionModal();
+          });
+        });
+      });
+    });
+  });
+}
+
+document.getElementById("regionMgrBtn").addEventListener("click",function(){
+  renderRegionModal();
+  document.getElementById("regionModal").classList.add("open");
+});
+
+document.getElementById("regionModalClose").addEventListener("click",function(){
+  document.getElementById("regionModal").classList.remove("open");
+});
+
+document.getElementById("regionModal").addEventListener("click",function(e){
+  if(e.target === this) this.classList.remove("open");
+});
+
+document.getElementById("addRegionBtn").addEventListener("click",function(){
+  var inp = document.getElementById("newRegionInput");
+  var name = inp.value.trim();
+  if(!name) return;
+  create("regions", {name: name}).then(function(){
+    inp.value = "";
+    regionsCache = null;
+    return loadRegions();
+  }).then(function(r){
+    regionsNames = r.map(function(x){ return x.name; });
+    refreshRegionSelect(filterRegion);
+    renderRegionModal();
+    renderCharacters();
+  });
+});
+
+document.getElementById("newRegionInput").addEventListener("keydown",function(e){
+  if(e.key === "Enter") document.getElementById("addRegionBtn").click();
+});
+
+loadRegions().then(function(r){
+  regionsData = r;
+  regionsNames = r.map(function(x){ return x.name; });
+  return refreshRegionSelect(filterRegion);
+}).then(function(){
+  return count("characters");
+}).then(function(n){
+  if(n===0){return seedData().then(renderCharacters);}
+  renderCharacters();
+}).catch(function(e){console.error(e);renderCharacters();});
+</script>
+</body>
+</html>

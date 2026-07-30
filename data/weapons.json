@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ms6elq1zsywhz2",
+    "name": "Aquila Favonia",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOzPl_ku38oazJts8-2Y65dMubCChwlfF-LpwERjeSwg&s=10",
+    "stats": {
+      "atk": 23.43,
+      "critDmg": 0,
+      "critRate": 0,
+      "hp": 0,
+      "energyRecharge": 0,
+      "elementalMastery": 0,
+      "defense": 0
+    },
+    "materialId": "ms6ekrahxfperh"
+  }
+]

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adventurer's Log — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+<style>
+.hero{margin-bottom:24px}
+.hero h1{font-family:var(--font-heading);font-size:26px;font-weight:600;color:var(--accent);letter-spacing:.04em;margin-bottom:4px}
+.hero p{color:var(--text-dim);font-size:14px}
+.section-title{font-family:var(--font-heading);font-size:13px;color:var(--text-dim);margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.quick-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:24px}
+.quick-link{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);text-align:center;transition:.2s}
+.quick-link:hover{border-color:var(--accent);background:rgba(212,168,67,0.04)}
+.quick-link .ql-icon{font-size:22px;color:var(--accent)}
+.quick-link .ql-label{font-size:12px;color:var(--text);font-weight:500}
+.quick-link .ql-count{font-size:11px;color:var(--text-muted)}
+.char-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.char-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.char-stat-card .cs-value{font-family:var(--font-heading);font-size:26px;font-weight:600;line-height:1.2}
+.char-stat-card .cs-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.char-stat-card.cs-done .cs-value{color:var(--success)}
+.char-stat-card.cs-progress .cs-value{color:var(--warning)}
+.char-stat-card.cs-notstarted .cs-value{color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<nav class="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">✦ Adventurer's Log</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="talents/talents.html">Talents</a>
+      <a href="weapon-materials/weapon-materials.html">Weapon Mats</a>
+      <a href="artifacts/artifacts.html">Artifacts</a>
+      <a href="weapons/weapons.html">Weapons</a>
+      <a href="characters/characters.html">Characters</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <h1>Adventurer's Dashboard</h1>
+    <p>Track farming progress across all characters, talents, weapons, and artifacts.</p>
+  </div>
+
+  <div class="section-title">👤 Characters</div>
+  <div class="char-stats" id="charStats"></div>
+
+  <div class="section-title">📅 Domains Open Today — <span id="todayName"></span></div>
+  <div class="schedule-grid" id="todaySchedule"></div>
+
+  <div class="section-title">Quick Access</div>
+  <div class="quick-links">
+    <a href="talents/talents.html" class="quick-link">
+      <span class="ql-icon">📖</span>
+      <span class="ql-label">Talents</span>
+      <span class="ql-count" id="qlTalents">0</span>
+    </a>
+    <a href="weapon-materials/weapon-materials.html" class="quick-link">
+      <span class="ql-icon">⚒️</span>
+      <span class="ql-label">Weapon Mats</span>
+      <span class="ql-count" id="qlWeaponMats">0</span>
+    </a>
+    <a href="artifacts/artifacts.html" class="quick-link">
+      <span class="ql-icon">💠</span>
+      <span class="ql-label">Artifacts</span>
+      <span class="ql-count" id="qlArtifacts">0</span>
+    </a>
+    <a href="weapons/weapons.html" class="quick-link">
+      <span class="ql-icon">⚔️</span>
+      <span class="ql-label">Weapons</span>
+      <span class="ql-count" id="qlWeapons">0</span>
+    </a>
+    <a href="characters/characters.html" class="quick-link">
+      <span class="ql-icon">👤</span>
+      <span class="ql-label">Characters</span>
+      <span class="ql-count" id="qlCharacters">0</span>
+    </a>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var today = new Date().getDay();
+
+document.getElementById("todayName").textContent = DAYS[today];
+
+function renderAll(){
+  Promise.all([
+    count("talents"), count("weapon-materials"), count("artifacts"),
+    count("weapons"), count("characters"),
+    getAll("characters"), getAll("talents"), getAll("weapon-materials")
+  ]).then(function(r){
+    var tCount=r[0], wmCount=r[1], aCount=r[2], wCount=r[3], cCount=r[4];
+    var chars=r[5], talents=r[6], wmats=r[7];
+
+    document.getElementById("qlTalents").textContent=tCount;
+    document.getElementById("qlWeaponMats").textContent=wmCount;
+    document.getElementById("qlArtifacts").textContent=aCount;
+    document.getElementById("qlWeapons").textContent=wCount;
+    document.getElementById("qlCharacters").textContent=cCount;
+
+    var notStarted=0, progress=0, completed=0;
+    for(var i=0;i<chars.length;i++){
+      var s=chars[i].status;
+      if(s==="completed") completed++;
+      else if(s==="progress") progress++;
+      else notStarted++;
+    }
+    document.getElementById("charStats").innerHTML=
+      '<div class="char-stat-card cs-notstarted"><div class="cs-value">'+notStarted+'</div><div class="cs-label">Not Started</div></div>'+
+      '<div class="char-stat-card cs-progress"><div class="cs-value">'+progress+'</div><div class="cs-label">In Progress</div></div>'+
+      '<div class="char-stat-card cs-done"><div class="cs-value">'+completed+'</div><div class="cs-label">Completed</div></div>';
+
+    var avail=[];
+    for(var i=0;i<talents.length;i++){
+      var t=talents[i];
+      for(var j=0;j<t.days.length;j++){ if(t.days[j]===today){ t._label='Talent'; avail.push(t); break; } }
+    }
+    for(var i=0;i<wmats.length;i++){
+      var t=wmats[i];
+      for(var j=0;j<t.days.length;j++){ if(t.days[j]===today){ t._label='Weapon Mat'; avail.push(t); break; } }
+    }
+
+    var el=document.getElementById("todaySchedule");
+    if(avail.length===0){
+      el.innerHTML='<div class="empty-state"><span class="empty-icon">😴</span>No domains open today.</div>';
+      return;
+    }
+    var h="";
+    for(var i=0;i<avail.length;i++){
+      var t=avail[i];
+      h+='<div class="sched-card active"><div class="sched-icon">'+(t.image?'<img src="'+t.image+'" alt="">':t.region.charAt(0))+'</div>';
+      h+='<div class="sched-name">'+(t.name||'—')+'</div>';
+      h+='<div class="sched-region">'+t.region+' <span style="font-size:9px;color:var(--text-muted)">('+t._label+')</span></div>';
+      h+='<div class="sched-tag">Open Today</div></div>';
+    }
+    el.innerHTML=h;
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>

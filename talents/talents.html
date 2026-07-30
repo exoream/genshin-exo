@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adventurer's Log — Talents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid .full{grid-column:1/-1}
+.day-indicator{display:flex;gap:3px;flex-wrap:wrap}
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.filter-bar .summary{font-size:12px;color:var(--text-dim);margin-left:auto}
+.filter-bar .summary b{color:var(--accent)}
+.region-mgr-btn{font-size:11px;padding:3px 10px;cursor:pointer;color:var(--text-dim);background:none;border:1px dashed var(--border);border-radius:4px;margin-left:6px;transition:.15s;font-family:var(--font-body)}
+.region-mgr-btn:hover{color:var(--accent);border-color:var(--accent)}
+.rm-list{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.rm-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px}
+.rm-item .rm-del{background:none;border:none;color:var(--danger);cursor:pointer;font-size:15px;padding:0 4px;line-height:1}
+.rm-item .rm-del:hover{color:#fca5a5}
+.rm-add{display:flex;gap:8px}
+.rm-add input{flex:1}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="main-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-brand">✦ Adventurer's Log</a>
+    <div class="nav-links">
+      <a href="../index.html">Dashboard</a>
+      <a href="../talents/talents.html" class="active">Talents</a>
+      <a href="../weapon-materials/weapon-materials.html">Weapon Mats</a>
+      <a href="../artifacts/artifacts.html">Artifacts</a>
+      <a href="../weapons/weapons.html">Weapons</a>
+      <a href="../characters/characters.html">Characters</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1>Talents</h1>
+      <p>Manage talent books — domain, region, schedule, and image.</p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn btn-primary" id="showAddBtn">+ Add Talent</button>
+    </div>
+  </div>
+
+  <div class="section-title">Open Today — <span id="todayName"></span></div>
+  <div class="schedule-grid" id="todaySchedule"></div>
+
+  <div class="card" id="formCard" style="display:none;margin-bottom:20px;">
+    <div class="card-header">
+      <span class="card-title" id="formTitle">Add Talent</span>
+      <button class="modal-close" id="formClose">&times;</button>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Domain Name</label>
+          <input class="form-control" id="fDomain" placeholder="e.g. Domain of Mastery: Frost">
+        </div>
+        <div class="form-group">
+          <label>Region</label>
+          <div style="display:flex;gap:6px">
+            <select class="form-control" id="fRegion" style="flex:1">
+              <option value="">-- Select --</option>
+            </select>
+            <button class="region-mgr-btn" id="regionMgrBtnF" title="Manage Regions">🛠</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Item Name</label>
+          <input class="form-control" id="fName" placeholder="e.g. Freedom, Prosperity...">
+        </div>
+        <div class="form-group full">
+          <label>Open Days</label>
+          <div class="day-checks" id="dayChecks">
+            <label data-d="1"><input type="checkbox" value="1"> Mon</label>
+            <label data-d="2"><input type="checkbox" value="2"> Tue</label>
+            <label data-d="3"><input type="checkbox" value="3"> Wed</label>
+            <label data-d="4"><input type="checkbox" value="4"> Thu</label>
+            <label data-d="5"><input type="checkbox" value="5"> Fri</label>
+            <label data-d="6"><input type="checkbox" value="6"> Sat</label>
+            <label data-d="0"><input type="checkbox" value="0"> Sun</label>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label>Image (URL)</label>
+          <input class="form-control" id="fImage" placeholder="https://example.com/image.png (optional)">
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;">
+        <button class="btn btn-primary" id="saveBtn">Save</button>
+        <button class="btn btn-ghost" id="cancelBtn" style="display:none;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <input class="form-control" id="searchInput" placeholder="Search talents..." style="width:200px;">
+    <select class="form-control" id="regionFilter" style="width:auto;min-width:140px;">
+      <option value="all">All Regions</option>
+    </select>
+    <button class="region-mgr-btn" id="regionMgrBtn">🛠 Manage</button>
+    <span class="summary" id="summaryText"></span>
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <div class="card-header">
+      <span class="card-title">Talent List</span>
+      <span style="font-size:12px;color:var(--text-muted)" id="listCount"></span>
+    </div>
+    <div class="card-body" id="listBody"></div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+
+<div class="modal-overlay" id="regionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Manage Regions</h2>
+      <button class="modal-close" id="regionModalClose">&times;</button>
+    </div>
+    <div class="rm-add">
+      <input class="form-control" id="newRegionInput" placeholder="New region name">
+      <button class="btn btn-primary" id="addRegionBtn">Add</button>
+    </div>
+    <div class="rm-list" id="regionList"></div>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script>
+var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var DS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var editingId = null;
+var filterSearch = "", filterRegion = "all";
+
+function g(){ return {
+  domain: document.getElementById("fDomain").value.trim(),
+  region: document.getElementById("fRegion").value,
+  name: document.getElementById("fName").value.trim(),
+  image: document.getElementById("fImage").value.trim(),
+  days: (function(){ var a=[]; document.querySelectorAll("#dayChecks input:checked").forEach(function(c){a.push(parseInt(c.value))}); return a; })()
+};}
+function v(d){
+  if(!d.domain){ alert("Domain name is required!"); return false; }
+  if(!d.region){ alert("Select a region!"); return false; }
+  if(!d.name){ alert("Item name is required!"); return false; }
+  if(d.days.length===0){ alert("Select at least one day!"); return false; }
+  return true;
+}
+function reset(){
+  editingId=null;
+  ["fDomain","fRegion","fName","fImage"].forEach(function(id){ document.getElementById(id).value=""; });
+  document.querySelectorAll("#dayChecks input").forEach(function(c){ c.checked=false; });
+  document.querySelectorAll("#dayChecks label").forEach(function(l){ l.classList.toggle("on",l.querySelector("input").checked); });
+  document.getElementById("formTitle").textContent="Add Talent";
+  document.getElementById("saveBtn").textContent="Save";
+  document.getElementById("cancelBtn").style.display="none";
+  document.getElementById("formCard").style.display="none";
+}
+function fill(t){
+  editingId=t.id;
+  document.getElementById("fDomain").value=t.domain||"";
+  document.getElementById("fRegion").value=t.region;
+  document.getElementById("fName").value=t.name;
+  document.getElementById("fImage").value=t.image||"";
+  document.querySelectorAll("#dayChecks input").forEach(function(c){ c.checked=t.days.indexOf(parseInt(c.value))!==-1; });
+  document.querySelectorAll("#dayChecks label").forEach(function(l){ l.classList.toggle("on",l.querySelector("input").checked); });
+  document.getElementById("formTitle").textContent="Edit Talent";
+  document.getElementById("saveBtn").textContent="Update";
+  document.getElementById("cancelBtn").style.display="inline-block";
+  document.getElementById("formCard").style.display="block";
+}
+function save(){
+  var d=g(); if(!v(d)) return;
+  var p = editingId ? update("talents", editingId, d) : create("talents", d);
+  p.then(function(){ reset(); render(); });
+}
+function esc(s){ return (s||"").replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];}); }
+
+function filterData(data){
+  return data.filter(function(t){
+    if(filterRegion!=="all" && t.region!==filterRegion) return false;
+    if(filterSearch){
+      var q=filterSearch.toLowerCase();
+      if((t.name||"").toLowerCase().indexOf(q)===-1 && (t.domain||"").toLowerCase().indexOf(q)===-1) return false;
+    }
+    return true;
+  });
+}
+
+function render(){
+  renderToday();
+  getAll("talents").then(function(data){
+    var filtered = filterData(data);
+    document.getElementById("summaryText").innerHTML="<b>"+filtered.length+"</b> / "+data.length+" shown";
+    document.getElementById("listCount").textContent=data.length+" items";
+    var el=document.getElementById("listBody");
+    if(filtered.length===0){ el.innerHTML='<div class="empty"><span style="display:block;font-size:28px;margin-bottom:8px;">📖</span>No talents match your filters.</div>'; return; }
+    var h='<div class="table-wrap"><table><thead><tr><th style="width:10%">Img</th><th style="width:21%">Domain</th><th style="width:14%">Item</th><th style="width:11%">Region</th><th style="width:23%">Days</th><th style="width:15%">Actions</th></tr></thead><tbody>';
+    for(var i=0;i<filtered.length;i++){
+      var t=filtered[i];
+      var dl=t.days.sort(function(a,b){return a-b}).map(function(d){return DAYS[d];}).join(", ");
+      var dh="";
+      for(var d=0;d<7;d++){dh+='<span class="day-badge '+(t.days.indexOf(d)!==-1?"on":"off")+'">'+DS[d]+'</span>';}
+      h+='<tr>';
+      h+='<td><div style="position:relative;display:inline-block"><span class="img-thumb" data-id="'+t.id+'" data-collection="talents" data-image="'+(t.image||'')+'" style="cursor:pointer">'+(t.image?'<img src="'+t.image+'" alt="">':'<span>?</span>')+'</span><button class="img-upload-trigger" data-id="'+t.id+'" data-collection="talents" style="position:absolute;bottom:-4px;right:-4px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg,#080c1a);background:var(--accent);color:#000;font-size:10px;line-height:12px;text-align:center;padding:0;cursor:pointer;font-weight:700">+</button></div></td>';
+      h+='<td>'+(t.domain||'—')+'</td><td>'+(t.name||'—')+'</td><td>'+t.region+'</td><td><div class="day-indicator">'+dh+'</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px;">'+dl+'</div></td>';
+      h+='<td><button class="btn btn-ghost btn-sm edit-btn" data-id="'+t.id+'">Edit</button> <button class="btn btn-danger btn-sm del-btn" data-id="'+t.id+'">Delete</button></td></tr>';
+    }
+    h+='</tbody></table></div>';
+    el.innerHTML=h;
+    el.querySelectorAll(".del-btn").forEach(function(b){ b.addEventListener("click",function(){ if(!confirm("Delete this talent?")) return; remove("talents",b.dataset.id).then(render); }); });
+    el.querySelectorAll(".edit-btn").forEach(function(b){ b.addEventListener("click",function(){ getById("talents",b.dataset.id).then(function(t){ if(t) fill(t); }); }); });
+    el.querySelectorAll(".img-thumb").forEach(function(el){ el.addEventListener("click",function(e){ if(e.target.closest(".img-upload-trigger")) return; var u=prompt("Image URL:",this.dataset.image||""); if(u) update("talents",this.dataset.id,{image:u}).then(render); }); });
+    el.querySelectorAll(".img-upload-trigger").forEach(function(el){ el.addEventListener("click",function(e){ e.stopPropagation(); var fi=document.getElementById("fileInput"); fi.dataset.uploadId=this.dataset.id; fi.dataset.uploadCol=this.dataset.collection; fi.click(); }); });
+  });
+}
+function renderToday(){
+  var today=new Date().getDay();
+  document.getElementById("todayName").textContent=DAYS[today];
+  getAll("talents").then(function(data){
+    var a=[];
+    for(var i=0;i<data.length;i++){ var t=data[i]; for(var j=0;j<t.days.length;j++){ if(t.days[j]===today){ a.push(t); break; } } }
+    var el=document.getElementById("todaySchedule");
+    if(a.length===0&&data.length===0){ el.innerHTML='<div class="empty-state"><span class="empty-icon">📭</span>No talent data. Add a talent to see schedule.</div>'; return; }
+    if(a.length===0){ el.innerHTML='<div class="empty-state"><span class="empty-icon">😴</span>No talent domains open today ('+DAYS[today]+').</div>'; return; }
+    var h="";
+    for(var i=0;i<a.length;i++){ var t=a[i]; h+='<div class="sched-card active"><div class="sched-icon img-thumb" data-id="'+t.id+'" data-collection="talents" data-image="'+(t.image||'')+'" style="cursor:pointer;position:relative">'+(t.image?'<img src="'+t.image+'" alt="">':t.region.charAt(0))+'<button class="img-upload-trigger" data-id="'+t.id+'" data-collection="talents" style="position:absolute;bottom:-4px;right:-4px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg,#080c1a);background:var(--accent);color:#000;font-size:10px;line-height:12px;text-align:center;padding:0;cursor:pointer;font-weight:700">+</button></div><div class="sched-name">'+esc(t.name)+'</div><div class="sched-region">'+esc(t.domain)+'</div><div class="sched-tag">Open Today</div></div>'; }
+    el.innerHTML=h;
+    el.querySelectorAll(".sched-card .img-thumb").forEach(function(el){ el.addEventListener("click",function(e){ if(e.target.closest(".img-upload-trigger")) return; var u=prompt("Image URL:",this.dataset.image||""); if(u) update("talents",this.dataset.id,{image:u}).then(render); }); });
+    el.querySelectorAll(".sched-card .img-upload-trigger").forEach(function(el){ el.addEventListener("click",function(e){ e.stopPropagation(); var fi=document.getElementById("fileInput"); fi.dataset.uploadId=this.dataset.id; fi.dataset.uploadCol=this.dataset.collection; fi.click(); }); });
+  });
+}
+
+function applyFilters(){
+  filterSearch = document.getElementById("searchInput").value;
+  filterRegion = document.getElementById("regionFilter").value;
+  render();
+}
+
+document.getElementById("showAddBtn").addEventListener("click",function(){ reset(); document.getElementById("formCard").style.display="block"; });
+document.getElementById("formClose").addEventListener("click",reset);
+document.getElementById("cancelBtn").addEventListener("click",reset);
+document.getElementById("saveBtn").addEventListener("click",save);
+document.getElementById("dayChecks").addEventListener("change",function(e){ if(e.target.type==="checkbox"){ e.target.closest("label").classList.toggle("on",e.target.checked); } });
+document.getElementById("searchInput").addEventListener("input",applyFilters);
+document.getElementById("regionFilter").addEventListener("change",applyFilters);
+
+document.getElementById("fileInput").addEventListener("change",function(e){
+  var file=e.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var base64=ev.target.result.split(",")[1];
+    var id=e.target.dataset.uploadId, col=e.target.dataset.uploadCol;
+    fetch("/api/upload",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:base64,name:file.name})})
+    .then(function(r){return r.json()}).then(function(res){
+      e.target.value="";
+      update(col,id,{image:res.url}).then(render);
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+function refreshRegionSelects(selectedRegion, selectedFilter){
+  regionsToSelect(document.getElementById("fRegion"), selectedRegion||"", false);
+  regionsToSelect(document.getElementById("regionFilter"), selectedFilter||filterRegion, true);
+}
+
+function renderRegionModal(){
+  loadRegions().then(function(r){
+    var list=document.getElementById("regionList");
+    list.innerHTML='';
+    r.forEach(function(reg){
+      var div=document.createElement("div"); div.className="rm-item";
+      div.innerHTML='<span>'+reg.name+'</span><button class="rm-del" data-id="'+reg.id+'">&times;</button>';
+      list.appendChild(div);
+    });
+    document.querySelectorAll(".rm-del").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        if(!confirm("Delete region \""+btn.parentElement.querySelector("span").textContent+"\"?")) return;
+        remove("regions", btn.dataset.id).then(function(){
+          regionsCache=null;
+          loadRegions().then(function(){
+            refreshRegionSelects(document.getElementById("fRegion").value, document.getElementById("regionFilter").value);
+            render();
+            renderRegionModal();
+          });
+        });
+      });
+    });
+  });
+}
+
+document.getElementById("regionMgrBtn").addEventListener("click",function(){ renderRegionModal(); document.getElementById("regionModal").classList.add("open"); });
+document.getElementById("regionMgrBtnF").addEventListener("click",function(){ renderRegionModal(); document.getElementById("regionModal").classList.add("open"); });
+document.getElementById("regionModalClose").addEventListener("click",function(){ document.getElementById("regionModal").classList.remove("open"); });
+document.getElementById("regionModal").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("open"); });
+document.getElementById("addRegionBtn").addEventListener("click",function(){
+  var inp=document.getElementById("newRegionInput");
+  var name=inp.value.trim();
+  if(!name) return;
+  create("regions",{name:name}).then(function(){
+    inp.value="";
+    regionsCache=null;
+    return loadRegions();
+  }).then(function(){
+    refreshRegionSelects(document.getElementById("fRegion").value, document.getElementById("regionFilter").value);
+    renderRegionModal();
+    render();
+  });
+});
+document.getElementById("newRegionInput").addEventListener("keydown",function(e){ if(e.key==="Enter") document.getElementById("addRegionBtn").click(); });
+
+loadRegions().then(function(){
+  return refreshRegionSelects("", filterRegion);
+}).then(function(){ render(); });
+</script>
+</body>
+</html>
