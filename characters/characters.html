@@ -145,6 +145,7 @@ input[type=number]{-moz-appearance:textfield}
       <button data-f="progress">Progress</button>
       <button data-f="not_started">Not Started</button>
     </div>
+    <input class="form-control" id="nameFilter" type="text" placeholder="Search name..." style="width:auto;min-width:140px;">
     <select class="form-control" id="regionFilter" style="width:auto;min-width:140px;">
       <option value="all">All Regions</option>
     </select>
@@ -182,7 +183,7 @@ var ART_SLOTS = [
   {key:"goblet",label:"Goblet"},
   {key:"circlet",label:"Circlet"}
 ];
-var filterStatus="all", filterRegion="all", filterToday=true;
+var filterStatus="all", filterRegion="all", filterToday=true, filterName="";
 var ST_OPTS = ["not_started","progress","completed"];
 var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
@@ -236,6 +237,7 @@ function renderCharacters(){
       if(filterStatus==="progress"&&c.status!=="progress") continue;
       if(filterStatus==="not_started"&&c.status!=="not_started") continue;
       if(filterRegion!=="all"&&c.region!==filterRegion) continue;
+      if(filterName && (c.name||"").toLowerCase().indexOf(filterName.toLowerCase())===-1) continue;
       if(filterToday && !isFarmableToday(c, wpc, tlc, wmc)) continue;
       visible.push(c);
     }
@@ -443,6 +445,7 @@ document.getElementById("statusFilter").addEventListener("click",function(e){
   renderCharacters();
 });
 document.getElementById("regionFilter").addEventListener("change",function(e){filterRegion=e.target.value;renderCharacters();});
+document.getElementById("nameFilter").addEventListener("input",function(e){filterName=e.target.value;renderCharacters();});
 document.getElementById("addBtn").addEventListener("click",function(){create("characters",newChar({})).then(renderCharacters);});
 
 function refreshRegionSelect(selected){
