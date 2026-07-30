@@ -143,6 +143,7 @@ var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturda
 var DS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 var editingId = null;
 var filterSearch = "", filterRegion = "all";
+var currentPage = 1, perPage = 10;
 
 function g(){ return {
   domain: document.getElementById("fDomain").value.trim(),
@@ -203,13 +204,17 @@ function render(){
   renderToday();
   getAll("talents").then(function(data){
     var filtered = filterData(data);
+    var totalPages = Math.ceil(filtered.length / perPage) || 1;
+    if(currentPage > totalPages) currentPage = totalPages;
+    var start = (currentPage - 1) * perPage;
+    var pageItems = filtered.slice(start, start + perPage);
     document.getElementById("summaryText").innerHTML="<b>"+filtered.length+"</b> / "+data.length+" shown";
     document.getElementById("listCount").textContent=data.length+" items";
     var el=document.getElementById("listBody");
     if(filtered.length===0){ el.innerHTML='<div class="empty"><span style="display:block;font-size:28px;margin-bottom:8px;">📖</span>No talents match your filters.</div>'; return; }
     var h='<div class="table-wrap"><table><thead><tr><th style="width:10%">Img</th><th style="width:21%">Domain</th><th style="width:14%">Item</th><th style="width:11%">Region</th><th style="width:23%">Days</th><th style="width:15%">Actions</th></tr></thead><tbody>';
-    for(var i=0;i<filtered.length;i++){
-      var t=filtered[i];
+    for(var i=0;i<pageItems.length;i++){
+      var t=pageItems[i];
       var dl=t.days.sort(function(a,b){return a-b}).map(function(d){return DAYS[d];}).join(", ");
       var dh="";
       for(var d=0;d<7;d++){dh+='<span class="day-badge '+(t.days.indexOf(d)!==-1?"on":"off")+'">'+DS[d]+'</span>';}
@@ -219,11 +224,13 @@ function render(){
       h+='<td><button class="btn btn-ghost btn-sm edit-btn" data-id="'+t.id+'">Edit</button> <button class="btn btn-danger btn-sm del-btn" data-id="'+t.id+'">Delete</button></td></tr>';
     }
     h+='</tbody></table></div>';
+    h+=buildPagination(currentPage, totalPages);
     el.innerHTML=h;
     el.querySelectorAll(".del-btn").forEach(function(b){ b.addEventListener("click",function(){ if(!confirm("Delete this talent?")) return; remove("talents",b.dataset.id).then(render); }); });
     el.querySelectorAll(".edit-btn").forEach(function(b){ b.addEventListener("click",function(){ getById("talents",b.dataset.id).then(function(t){ if(t) fill(t); }); }); });
     el.querySelectorAll(".img-thumb").forEach(function(el){ el.addEventListener("click",function(e){ if(e.target.closest(".img-upload-trigger")) return; var u=prompt("Image URL:",this.dataset.image||""); if(u) update("talents",this.dataset.id,{image:u}).then(render); }); });
     el.querySelectorAll(".img-upload-trigger").forEach(function(el){ el.addEventListener("click",function(e){ e.stopPropagation(); var fi=document.getElementById("fileInput"); fi.dataset.uploadId=this.dataset.id; fi.dataset.uploadCol=this.dataset.collection; fi.click(); }); });
+    bindPagination();
   });
 }
 function renderToday(){
@@ -243,7 +250,32 @@ function renderToday(){
   });
 }
 
+function buildPagination(page, total){
+  if(total <= 1) return '';
+  var h = '<div class="pagination">';
+  h += '<button class="btn btn-sm page-prev" data-page="' + (page - 1) + '"' + (page <= 1 ? ' disabled' : '') + '>Prev</button>';
+  var ps = [], s = Math.max(1, page - 2), e = Math.min(total, page + 2);
+  if(s > 1){ ps.push(1); if(s > 2) ps.push('...'); }
+  for(var p = s; p <= e; p++) ps.push(p);
+  if(e < total){ if(e < total - 1) ps.push('...'); ps.push(total); }
+  for(var i = 0; i < ps.length; i++){
+    if(ps[i] === '...'){ h += '<span class="page-dots">…</span>'; }
+    else { h += '<button class="btn btn-sm page-btn' + (ps[i] === page ? ' active' : '') + '" data-page="' + ps[i] + '">' + ps[i] + '</button>'; }
+  }
+  h += '<button class="btn btn-sm page-next" data-page="' + (page + 1) + '"' + (page >= total ? ' disabled' : '') + '>Next</button>';
+  h += '</div>';
+  return h;
+}
+function bindPagination(){
+  document.querySelectorAll(".page-btn, .page-prev, .page-next").forEach(function(b){
+    b.addEventListener("click", function(){
+      var p = parseInt(this.dataset.page);
+      if(!isNaN(p) && p !== currentPage){ currentPage = p; render(); }
+    });
+  });
+}
 function applyFilters(){
+  currentPage = 1;
   filterSearch = document.getElementById("searchInput").value;
   filterRegion = document.getElementById("regionFilter").value;
   render();
