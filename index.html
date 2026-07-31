@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Adventurer's Log — Dashboard</title>
+<title>Adventurer's Log</title>
+<link rel="icon" href="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
@@ -31,7 +32,7 @@
 
 <nav class="main-nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">✦ Adventurer's Log</a>
+    <a href="index.html" class="nav-brand"><img src="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526" alt=""> Adventurer's Log</a>
     <div class="nav-links">
       <a href="index.html" class="active">Dashboard</a>
       <a href="talents/talents.html">Talents</a>
@@ -40,6 +41,9 @@
       <a href="weapons/weapons.html">Weapons</a>
       <a href="characters/characters.html">Characters</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -86,6 +90,7 @@
 </div>
 
 <script src="js/data.js"></script>
+<script src="js/nav.js"></script>
 <script>
 var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var today = new Date().getDay();

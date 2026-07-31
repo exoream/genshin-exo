@@ -67,7 +67,7 @@ var MIME = {
 
 function initData(){
   if(!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, {recursive:true});
-  var stores = ['talents','weapon-materials','artifacts','weapons','characters','regions'];
+  var stores = ['talents','weapon-materials','artifacts','weapons','characters','regions','weapon-stats','weapon-types'];
   stores.forEach(function(s){
     var p = path.join(DATA_DIR, s+'.json');
     if(!fs.existsSync(p)) fs.writeFileSync(p, '[]', 'utf-8');
@@ -80,6 +80,24 @@ function initData(){
       regions.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), name: n });
     });
     writeFile('regions', regions);
+  }
+  var wsp = path.join(DATA_DIR, 'weapon-stats.json');
+  var stats = JSON.parse(fs.readFileSync(wsp, 'utf-8') || '[]');
+  if(stats.length === 0){
+    var statDefaults = ["ATK%","HP%","DEF%","CRIT Rate%","CRIT DMG%","Energy Recharge%","Elemental Mastery","Physical DMG%"];
+    statDefaults.forEach(function(n){
+      stats.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), name: n });
+    });
+    writeFile('weapon-stats', stats);
+  }
+  var wtp = path.join(DATA_DIR, 'weapon-types.json');
+  var wtypes = JSON.parse(fs.readFileSync(wtp, 'utf-8') || '[]');
+  if(wtypes.length === 0){
+    var typeDefaults = ["Sword","Claymore","Polearm","Bow","Catalyst"];
+    typeDefaults.forEach(function(n){
+      wtypes.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), name: n });
+    });
+    writeFile('weapon-types', wtypes);
   }
 }
 

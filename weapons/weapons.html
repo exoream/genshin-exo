@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Adventurer's Log — Weapons</title>
+<title>Adventurer's Log</title>
+<link rel="icon" href="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/main.css">
@@ -22,7 +23,7 @@
 
 <nav class="main-nav">
   <div class="nav-inner">
-    <a href="../index.html" class="nav-brand">✦ Adventurer's Log</a>
+    <a href="../index.html" class="nav-brand"><img src="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526" alt=""> Adventurer's Log</a>
     <div class="nav-links">
       <a href="../index.html">Dashboard</a>
       <a href="../talents/talents.html">Talents</a>
@@ -31,6 +32,9 @@
       <a href="../weapons/weapons.html" class="active">Weapons</a>
       <a href="../characters/characters.html">Characters</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -67,18 +71,22 @@
           </select>
         </div>
         <div class="form-group full">
+          <label>Type</label>
+          <div style="display:flex;gap:6px">
+            <select class="form-control" id="fType" style="flex:1">
+              <option value="">-- Select Type --</option>
+            </select>
+            <button class="mgr-btn" id="typeMgrBtn" title="Manage Types">🛠</button>
+          </div>
+        </div>
+        <div class="form-group full">
           <label>Main Stat</label>
-          <select class="form-control" id="fStatType">
-            <option value="">-- Select Stat --</option>
-            <option>ATK%</option>
-            <option>HP%</option>
-            <option>DEF%</option>
-            <option>CRIT Rate%</option>
-            <option>CRIT DMG%</option>
-            <option>Energy Recharge%</option>
-            <option>Elemental Mastery</option>
-            <option>Physical DMG%</option>
-          </select>
+          <div style="display:flex;gap:6px">
+            <select class="form-control" id="fStatType" style="flex:1">
+              <option value="">-- Select Stat --</option>
+            </select>
+            <button class="mgr-btn" id="statMgrBtn" title="Manage Stats">🛠</button>
+          </div>
         </div>
       </div>
       <div style="margin-top:14px;display:flex;gap:8px;">
@@ -92,11 +100,6 @@
     <input class="form-control" id="searchInput" placeholder="Search weapons..." style="width:200px;">
     <select class="form-control" id="typeFilter" style="width:auto;min-width:140px;">
       <option value="all">All Types</option>
-      <option>Sword</option>
-      <option>Claymore</option>
-      <option>Polearm</option>
-      <option>Bow</option>
-      <option>Catalyst</option>
     </select>
     <span class="summary" id="summaryText"></span>
   </div>
@@ -111,7 +114,38 @@
 </div>
 
 <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+<div class="modal-overlay" id="typeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Manage Weapon Types</h2>
+      <button class="modal-close" id="typeModalClose">&times;</button>
+    </div>
+    <div class="rm-add">
+      <input class="form-control" id="newTypeInput" placeholder="New type e.g. Sword, Bow...">
+      <button class="btn btn-primary" id="addTypeBtn">Add</button>
+    </div>
+    <div class="rm-list" id="typeList"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="statModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Manage Main Stats</h2>
+      <button class="modal-close" id="statModalClose">&times;</button>
+    </div>
+    <div class="rm-add">
+      <input class="form-control" id="newStatInput" placeholder="New stat e.g. ATK%, HP%...">
+      <button class="btn btn-primary" id="addStatBtn">Add</button>
+    </div>
+    <div class="rm-list" id="statList"></div>
+  </div>
+</div>
+
 <script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/table.js"></script>
 <script>
 var editingId = null;
 var filterSearch = "", filterType = "all";
@@ -121,6 +155,7 @@ function g(){ return {
   name: document.getElementById("fName").value.trim(),
   image: document.getElementById("fImage").value.trim(),
   materialId: document.getElementById("fMaterialId").value,
+  type: document.getElementById("fType").value,
   statType: document.getElementById("fStatType").value
 };}
 function v(d){
@@ -132,6 +167,7 @@ function reset(){
   document.getElementById("fName").value="";
   document.getElementById("fImage").value="";
   document.getElementById("fMaterialId").value="";
+  document.getElementById("fType").value="";
   document.getElementById("fStatType").value="";
   document.getElementById("formTitle").textContent="Add Weapon";
   document.getElementById("saveBtn").textContent="Save";
@@ -143,6 +179,7 @@ function fill(t){
   document.getElementById("fName").value=t.name;
   document.getElementById("fImage").value=t.image||"";
   document.getElementById("fMaterialId").value=t.materialId||"";
+  document.getElementById("fType").value=t.type||"";
   document.getElementById("fStatType").value=t.statType||"";
   document.getElementById("formTitle").textContent="Edit Weapon";
   document.getElementById("saveBtn").textContent="Update";
@@ -179,7 +216,7 @@ function render(){
     document.getElementById("listCount").textContent=data.length+" items";
     var el=document.getElementById("listBody");
     if(filtered.length===0){ el.innerHTML='<div class="empty"><span style="display:block;font-size:28px;margin-bottom:8px;">⚔️</span>No weapons match your filters.</div>'; return; }
-    var h='<div class="table-wrap"><table><thead><tr><th style="width:8%">Img</th><th style="width:18%">Name</th><th style="width:38%">Stats</th><th style="width:10%">Mat</th><th style="width:18%">Actions</th></tr></thead><tbody>';
+    var h='<div class="table-wrap"><table><thead><tr><th style="width:8%">Img</th><th style="width:16%">Name</th><th style="width:10%">Type</th><th style="width:30%">Stats</th><th style="width:10%">Mat</th><th style="width:18%">Actions</th></tr></thead><tbody>';
     for(var i=0;i<pageItems.length;i++){
       var t=pageItems[i];
       var st=t.statType ? '<span style="color:var(--accent);font-weight:600;">'+esc(t.statType)+'</span>' : '<span style="color:var(--text-muted)">—</span>';
@@ -187,15 +224,16 @@ function render(){
       h+='<tr>';
       h+='<td><div style="position:relative;display:inline-block"><span class="img-thumb" data-id="'+t.id+'" data-collection="weapons" data-image="'+(t.image||'')+'" style="cursor:pointer">'+(t.image?'<img src="'+t.image+'" alt="">':'?')+'</span><button class="img-upload-trigger" data-id="'+t.id+'" data-collection="weapons" style="position:absolute;bottom:-4px;right:-4px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg,#080c1a);background:var(--accent);color:#000;font-size:10px;line-height:12px;text-align:center;padding:0;cursor:pointer;font-weight:700">+</button></div></td>';
       h+='<td><strong>'+esc(t.name)+'</strong></td>';
+      h+='<td style="font-size:12px">'+esc(t.type||'—')+'</td>';
       h+='<td style="font-size:12px">'+st+'</td>';
       h+='<td><span class="img-thumb" style="cursor:default">'+(mat&&mat.image?'<img src="'+mat.image+'" alt="">':(mat?mat.name.charAt(0):'?'))+'</span></td>';
-      h+='<td><button class="btn btn-ghost btn-sm edit-btn" data-id="'+t.id+'">Edit</button> <button class="btn btn-danger btn-sm del-btn" data-id="'+t.id+'">Delete</button></td></tr>';
+      h+='<td><button class="btn btn-ghost btn-sm edit-btn" data-id="'+t.id+'">Edit</button><button class="btn btn-danger btn-sm del-btn" data-id="'+t.id+'">Delete</button></td></tr>';
     }
     h+='</tbody></table></div>';
     h+=buildPagination(currentPage, totalPages);
     el.innerHTML=h;
     el.querySelectorAll(".del-btn").forEach(function(b){ b.addEventListener("click",function(){ if(!confirm("Delete this weapon?")) return; remove("weapons",b.dataset.id).then(render); }); });
-    el.querySelectorAll(".edit-btn").forEach(function(b){ b.addEventListener("click",function(){ getById("weapons",b.dataset.id).then(function(t){ if(t){ populateMaterialSelect(); fill(t); } }); }); });
+    el.querySelectorAll(".edit-btn").forEach(function(b){ b.addEventListener("click",function(){ getById("weapons",b.dataset.id).then(function(t){ if(t){ populateMaterialSelect(); populateStatSelect(t.statType||"").then(function(){ populateTypeSelect(t.type||"").then(function(){ fill(t); }); }); } }); }); });
     el.querySelectorAll(".img-thumb").forEach(function(el){ el.addEventListener("click",function(e){ if(e.target.closest(".img-upload-trigger")) return; var u=prompt("Image URL:",this.dataset.image||""); if(u) update("weapons",this.dataset.id,{image:u}).then(render); }); });
     el.querySelectorAll(".img-upload-trigger").forEach(function(el){ el.addEventListener("click",function(e){ e.stopPropagation(); var fi=document.getElementById("fileInput"); fi.dataset.uploadId=this.dataset.id; fi.dataset.uploadCol=this.dataset.collection; fi.click(); }); });
     bindPagination();
@@ -233,6 +271,102 @@ function applyFilters(){
   render();
 }
 
+function renderStatModal(){
+  loadWeaponStats().then(function(r){
+    var list=document.getElementById("statList");
+    list.innerHTML='';
+    r.forEach(function(stat){
+      var div=document.createElement("div"); div.className="rm-item";
+      div.innerHTML='<span>'+esc(stat.name)+'</span><button class="rm-del" data-id="'+stat.id+'">&times;</button>';
+      list.appendChild(div);
+    });
+    document.querySelectorAll("#statList .rm-del").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        if(!confirm('Delete stat "'+btn.parentElement.querySelector("span").textContent+'"?')) return;
+        remove("weapon-stats", btn.dataset.id).then(function(){
+          weaponStatsCache=null;
+          loadWeaponStats().then(function(){
+            populateStatSelect(document.getElementById("fStatType").value);
+            renderStatModal();
+            render();
+          });
+        });
+      });
+    });
+  });
+}
+
+document.getElementById("statMgrBtn").addEventListener("click",function(){ renderStatModal(); document.getElementById("statModal").classList.add("open"); });
+document.getElementById("statModalClose").addEventListener("click",function(){ document.getElementById("statModal").classList.remove("open"); });
+document.getElementById("statModal").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("open"); });
+document.getElementById("addStatBtn").addEventListener("click",function(){
+  var inp=document.getElementById("newStatInput");
+  var name=inp.value.trim();
+  if(!name) return;
+  create("weapon-stats",{name:name}).then(function(){
+    inp.value="";
+    weaponStatsCache=null;
+    return loadWeaponStats();
+  }).then(function(){
+    populateStatSelect(document.getElementById("fStatType").value);
+    renderStatModal();
+    render();
+  });
+});
+document.getElementById("newStatInput").addEventListener("keydown",function(e){ if(e.key==="Enter") document.getElementById("addStatBtn").click(); });
+
+function renderTypeModal(){
+  loadWeaponTypes().then(function(r){
+    var list=document.getElementById("typeList");
+    list.innerHTML='';
+    r.forEach(function(type){
+      var div=document.createElement("div"); div.className="rm-item";
+      div.innerHTML='<span>'+esc(type.name)+'</span><button class="rm-del" data-id="'+type.id+'">&times;</button>';
+      list.appendChild(div);
+    });
+    document.querySelectorAll("#typeList .rm-del").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        if(!confirm('Delete type "'+btn.parentElement.querySelector("span").textContent+'"?')) return;
+        remove("weapon-types", btn.dataset.id).then(function(){
+          weaponTypesCache=null;
+          loadWeaponTypes().then(function(){
+            populateTypeSelect(document.getElementById("fType").value);
+            weaponTypesToSelect(document.getElementById("typeFilter"), document.getElementById("typeFilter").value, true);
+            renderTypeModal();
+            render();
+          });
+        });
+      });
+    });
+  });
+}
+
+document.getElementById("typeMgrBtn").addEventListener("click",function(){ renderTypeModal(); document.getElementById("typeModal").classList.add("open"); });
+document.getElementById("typeModalClose").addEventListener("click",function(){ document.getElementById("typeModal").classList.remove("open"); });
+document.getElementById("typeModal").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("open"); });
+document.getElementById("addTypeBtn").addEventListener("click",function(){
+  var inp=document.getElementById("newTypeInput");
+  var name=inp.value.trim();
+  if(!name) return;
+  create("weapon-types",{name:name}).then(function(){
+    inp.value="";
+    weaponTypesCache=null;
+    return loadWeaponTypes();
+  }).then(function(){
+    populateTypeSelect(document.getElementById("fType").value);
+    weaponTypesToSelect(document.getElementById("typeFilter"), document.getElementById("typeFilter").value, true);
+    renderTypeModal();
+    render();
+  });
+});
+document.getElementById("newTypeInput").addEventListener("keydown",function(e){ if(e.key==="Enter") document.getElementById("addTypeBtn").click(); });
+
+loadWeaponTypes().then(function(){
+  return weaponTypesToSelect(document.getElementById("typeFilter"), filterType, true);
+}).then(function(){
+  return populateStatSelect();
+}).then(function(){ render(); });
+
 function populateMaterialSelect(){
   getAll("weapon-materials").then(function(matList){
     var sel=document.getElementById("fMaterialId");
@@ -241,7 +375,13 @@ function populateMaterialSelect(){
     matList.forEach(function(m){ sel.innerHTML+='<option value="'+m.id+'"'+(m.id===cur?' selected':'')+'>'+esc(m.name)+' ('+m.region+')</option>'; });
   });
 }
-document.getElementById("showAddBtn").addEventListener("click",function(){ reset(); populateMaterialSelect(); document.getElementById("formCard").style.display="block"; });
+function populateStatSelect(selectedVal){
+  return weaponStatsToSelect(document.getElementById("fStatType"), selectedVal);
+}
+function populateTypeSelect(selectedVal){
+  return weaponTypesToSelect(document.getElementById("fType"), selectedVal, false);
+}
+document.getElementById("showAddBtn").addEventListener("click",function(){ reset(); populateMaterialSelect(); populateStatSelect(); populateTypeSelect(); document.getElementById("formCard").style.display="block"; });
 document.getElementById("formClose").addEventListener("click",reset);
 document.getElementById("cancelBtn").addEventListener("click",reset);
 document.getElementById("saveBtn").addEventListener("click",save);

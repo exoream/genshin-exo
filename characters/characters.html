@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Adventurer's Log — Characters</title>
+<title>Adventurer's Log</title>
+<link rel="icon" href="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/main.css">
@@ -19,6 +20,43 @@ input[type=number]{-moz-appearance:textfield}
 
 .char-card{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
 .char-card:hover{border-color:rgba(212,168,67,0.2);box-shadow:0 2px 16px rgba(212,168,67,0.06)}
+.char-card.flash{animation:charFlash 2.2s ease}
+@keyframes charFlash{
+  0%,100%{box-shadow:none;border-color:var(--border)}
+  15%,70%{box-shadow:0 0 0 2px var(--accent),0 4px 20px rgba(212,168,67,0.35);border-color:var(--accent)}
+}
+
+/* ── ADD CHAR MODAL ── */
+.art-slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media (max-width:600px){.art-slot-grid{grid-template-columns:repeat(2,1fr)}}
+.art-slot{display:flex;flex-direction:column;gap:4px}
+.art-slot label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.nc-img-row{display:flex;align-items:center;gap:12px}
+.nc-img-prev{width:56px;height:56px;flex-shrink:0;border:1px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--surface-2);color:var(--text-muted);font-size:11px}
+.nc-img-prev img{width:100%;height:100%;object-fit:cover}
+.nc-img-ctrls{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.nc-img-btns{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Add char modal sections */
+.nc-sec-h{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px}
+
+/* Desktop: fit add-char modal without internal scroll */
+@media(min-width:769px){
+  #charModal .modal{max-width:760px;padding:18px 22px}
+  #charModal .modal-header{margin-bottom:14px;padding-bottom:10px}
+  #charModal .modal-footer{margin-top:14px;padding-top:10px}
+  #charModal .nc-form{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;row-gap:18px;align-items:stretch}
+  #charModal .nc-form .full{grid-column:1/-1}
+  #charModal .nc-sec{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column}
+  #charModal .nc-sec .form-group{margin-bottom:8px}
+  #charModal .nc-sec .form-row{display:flex;gap:8px;align-items:flex-end}
+  #charModal .nc-sec .form-row .form-group{flex:1;min-width:0}
+  #charModal .nc-sec label{font-size:10px;letter-spacing:.03em;white-space:nowrap}
+  #charModal .modal select.form-control{padding-right:30px}
+  #charModal .art-slot-grid{grid-template-columns:repeat(5,1fr)}
+  #charModal .form-control{padding:7px 10px;font-size:13px}
+  #charModal .nc-img-prev{width:48px;height:48px}
+}
 
 /* ── LEFT IMAGE PANEL ── */
 .char-head{width:240px;flex-shrink:0;position:relative;background:var(--surface-2);display:flex;flex-direction:column;padding:0;border-bottom:none;overflow:hidden}
@@ -108,14 +146,14 @@ input[type=number]{-moz-appearance:textfield}
 .rm-add input{flex:1}
 
 @media(max-width:1180px){.char-grid{grid-template-columns:1fr}}
-@media(max-width:600px){.char-card{flex-direction:column}.char-head{width:100%;min-height:260px}.tl-3{flex-direction:column}}
+@media(max-width:600px){.char-card{flex-direction:column}.char-head{width:100%;min-height:260px}}
 </style>
 </head>
 <body>
 
 <nav class="main-nav">
   <div class="nav-inner">
-    <a href="../index.html" class="nav-brand">✦ Adventurer's Log</a>
+    <a href="../index.html" class="nav-brand"><img src="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526" alt=""> Adventurer's Log</a>
     <div class="nav-links">
       <a href="../index.html">Dashboard</a>
       <a href="../talents/talents.html">Talents</a>
@@ -124,6 +162,9 @@ input[type=number]{-moz-appearance:textfield}
       <a href="../weapons/weapons.html">Weapons</a>
       <a href="../characters/characters.html" class="active">Characters</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -150,6 +191,12 @@ input[type=number]{-moz-appearance:textfield}
       <button data-f="not_started">Not Started</button>
     </div>
     <input class="form-control" id="nameFilter" type="text" placeholder="Search name..." style="width:auto;min-width:140px;">
+    <select class="form-control" id="sortFilter" style="width:auto;min-width:140px;">
+      <option value="default">Sort: Default</option>
+      <option value="name">Sort: Name</option>
+      <option value="level">Sort: Level</option>
+      <option value="status">Sort: Status</option>
+    </select>
     <select class="form-control" id="regionFilter" style="width:auto;min-width:140px;">
       <option value="all">All Regions</option>
     </select>
@@ -161,6 +208,7 @@ input[type=number]{-moz-appearance:textfield}
 </div>
 
 <input type="file" id="fileInput" accept="image/*" style="display:none">
+<input type="file" id="ncFileInput" accept="image/*" style="display:none">
 
 <div class="modal-overlay" id="regionModal">
   <div class="modal">
@@ -176,7 +224,116 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 </div>
 
+<div class="modal-overlay" id="charModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Add Character</h2>
+      <button class="modal-close" id="charModalClose">&times;</button>
+    </div>
+    <div class="nc-form">
+      <div class="nc-sec">
+        <div class="nc-sec-h">Character</div>
+        <div class="form-group">
+          <label>Name</label>
+          <input class="form-control" id="ncName" placeholder="e.g. Diluc, Furina, Nahida...">
+        </div>
+        <div class="form-group">
+          <label>Region</label>
+          <select class="form-control" id="ncRegion"></select>
+        </div>
+        <div class="form-group">
+          <label>Main Stat</label>
+          <select class="form-control" id="ncAscStat"></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1">
+            <label>Level</label>
+            <input class="form-control" id="ncLevel" type="number" min="1" max="100" value="1">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Status</label>
+            <select class="form-control" id="ncStatus">
+              <option value="not_started">Not Started</option>
+              <option value="progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="nc-sec">
+        <div class="nc-sec-h">Weapon &amp; Talent</div>
+        <div class="form-group">
+          <label>Weapon</label>
+          <select class="form-control" id="ncWeapon">
+            <option value="">-- None --</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1">
+            <label>Weapon Lv</label>
+            <input class="form-control" id="ncWeaponLevel" type="number" min="1" max="90" value="1">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>R</label>
+            <input class="form-control" id="ncRefine" type="number" min="1" max="5" value="1">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Weapon Status</label>
+            <select class="form-control" id="ncWeaponStatus">
+              <option value="not_started">Not Started</option>
+              <option value="progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Talent</label>
+          <select class="form-control" id="ncTalent">
+            <option value="">-- None --</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1">
+            <label>Talent Basic</label>
+            <input class="form-control" id="ncTB" type="number" min="1" max="12" value="1">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Talent Skill</label>
+            <input class="form-control" id="ncTS" type="number" min="1" max="12" value="1">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Talent Burst</label>
+            <input class="form-control" id="ncTBurst" type="number" min="1" max="12" value="1">
+          </div>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Artifacts</label>
+        <div class="art-slot-grid" id="ncArtSlots"></div>
+      </div>
+      <div class="form-group full">
+        <label>Photo</label>
+        <div class="nc-img-row">
+          <div class="nc-img-prev" id="ncImgPrev"></div>
+          <div class="nc-img-ctrls">
+            <input class="form-control form-control-sm" id="ncImgUrl" placeholder="Paste image URL...">
+            <div class="nc-img-btns">
+              <button class="btn btn-sm btn-ghost" id="ncImgBtn" type="button">+ Upload</button>
+              <button class="btn btn-sm btn-ghost" id="ncImgClear" type="button">✕ Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="charCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="charSaveBtn">+ Add Character</button>
+    </div>
+  </div>
+</div>
+
 <script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
 <script>
 var regionsNames = []; var regionsData = [];
 var ASC_STATS = ["ATK%","HP%","DEF%","CRIT Rate%","CRIT DMG%","Energy Recharge%","Elemental Mastery","Healing Bonus%","Physical DMG%"];
@@ -187,7 +344,8 @@ var ART_SLOTS = [
   {key:"goblet",label:"Goblet"},
   {key:"circlet",label:"Circlet"}
 ];
-var filterStatus="all", filterRegion="all", filterToday=true, filterName="";
+var filterStatus="all", filterRegion="all", filterToday=true, filterName="", filterSort="default";
+var currentPage = 1, perPage = 20, focusCharId = null;
 var ST_OPTS = ["not_started","progress","completed"];
 var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
@@ -245,6 +403,16 @@ function renderCharacters(){
       if(filterToday && !isFarmableToday(c, wpc, tlc, wmc)) continue;
       visible.push(c);
     }
+    if(filterSort==="name") visible.sort(function(a,b){return (a.name||"").localeCompare(b.name||"");});
+    else if(filterSort==="level") visible.sort(function(a,b){return (b.level||0)-(a.level||0);});
+    else if(filterSort==="status"){ var so={"completed":0,"progress":1,"not_started":2}; visible.sort(function(a,b){return (so[a.status]!==undefined?so[a.status]:2)-(so[b.status]!==undefined?so[b.status]:2);}); }
+    if(focusCharId){
+      for(var k=0;k<visible.length;k++){ if(visible[k].id===focusCharId){ currentPage=Math.floor(k/perPage)+1; break; } }
+    }
+    var totalPages=Math.ceil(visible.length/perPage)||1;
+    if(currentPage>totalPages) currentPage=totalPages;
+    var pStart=(currentPage-1)*perPage;
+    var pageItems=visible.slice(pStart,pStart+perPage);
     var dc=0; for(var i=0;i<all.length;i++){if(isComplete(all[i]))dc++;}
     document.getElementById("summaryText").innerHTML="<b>"+dc+"</b> / "+all.length+" completed";
 
@@ -256,7 +424,7 @@ function renderCharacters(){
 
     for(var ri=0;ri<regionsNames.length;ri++){
       var region=regionsNames[ri];
-      var list=[]; for(var i=0;i<visible.length;i++){if(visible[i].region===region)list.push(visible[i]);}
+      var list=[]; for(var i=0;i<pageItems.length;i++){if(pageItems[i].region===region)list.push(pageItems[i]);}
       if(list.length===0)continue;
       var rh=document.createElement("div");rh.className="region-header";rh.innerHTML='<h2>'+region+' <span class="count">'+list.length+'</span></h2>';container.appendChild(rh);
       var grid=document.createElement("div");grid.className="char-grid";
@@ -269,7 +437,7 @@ function renderCharacters(){
         var tlToday=c.talentId && tl && tl.days && tl.days.indexOf(today)!==-1;
         var wpToday=c.weaponId && wp && wp.materialId && (function(){var wm=wmc.find(function(x){return x.id===wp.materialId;});return wm&&wm.days&&wm.days.indexOf(today)!==-1;})();
 
-        var card=document.createElement("div");card.className="char-card";
+        var card=document.createElement("div");card.className="char-card";card.setAttribute("data-id",c.id);
         var h='<div class="char-head">'+
           '<div class="av-wrap">'+
             '<div class="char-avatar">'+(c.image?'<img src="'+esc(c.image)+'" alt="">':esc(c.name).charAt(0).toUpperCase()||'?')+'</div>'+
@@ -411,7 +579,51 @@ function renderCharacters(){
       }
       container.appendChild(grid);
     }
+
+    if(visible.length>perPage){
+      var pg=buildPagination(currentPage, totalPages);
+      container.appendChild(pg);
+      bindPagination();
+    }
+    if(focusCharId){
+      var fid=focusCharId;
+      focusCharId=null;
+      setTimeout(function(){
+        var el=document.querySelector('.char-card[data-id="'+fid+'"]');
+        if(el){
+          el.scrollIntoView({behavior:"smooth",block:"center"});
+          el.classList.add("flash");
+        }
+      },150);
+    }
   }).catch(function(e){ console.error(e); alert("Error loading data. Make sure the server is running."); });
+}
+
+function buildPagination(page, total){
+  if(total <= 1) return null;
+  var wrap=document.createElement("div");
+  var h='<div class="pagination">';
+  h+='<button class="btn btn-sm page-prev" data-page="'+(page-1)+'"'+(page<=1?' disabled':'')+'>Prev</button>';
+  var ps=[], s=Math.max(1,page-2), e=Math.min(total,page+2);
+  if(s>1){ ps.push(1); if(s>2) ps.push('...'); }
+  for(var p=s;p<=e;p++) ps.push(p);
+  if(e<total){ if(e<total-1) ps.push('...'); ps.push(total); }
+  for(var i=0;i<ps.length;i++){
+    if(ps[i]==='...'){ h+='<span class="page-dots">…</span>'; }
+    else { h+='<button class="btn btn-sm page-btn'+(ps[i]===page?' active':'')+'" data-page="'+ps[i]+'">'+ps[i]+'</button>'; }
+  }
+  h+='<button class="btn btn-sm page-next" data-page="'+(page+1)+'"'+(page>=total?' disabled':'')+'>Next</button>';
+  h+='</div>';
+  wrap.innerHTML=h;
+  return wrap;
+}
+function bindPagination(){
+  document.querySelectorAll(".page-btn, .page-prev, .page-next").forEach(function(b){
+    b.addEventListener("click", function(){
+      var p=parseInt(this.dataset.page);
+      if(!isNaN(p) && p!==currentPage){ currentPage=p; renderCharacters(); }
+    });
+  });
 }
 
 function seedData(){
@@ -442,6 +654,7 @@ document.getElementById("todayFilter").addEventListener("click",function(e){
   filterToday=e.target.dataset.f==="on";
   document.querySelectorAll("#todayFilter button").forEach(function(b){b.classList.remove("on");});
   e.target.classList.add("on");
+  currentPage=1;
   renderCharacters();
 });
 document.getElementById("statusFilter").addEventListener("click",function(e){
@@ -449,11 +662,137 @@ document.getElementById("statusFilter").addEventListener("click",function(e){
   filterStatus=e.target.dataset.f;
   document.querySelectorAll("#statusFilter button").forEach(function(b){b.classList.remove("on");});
   e.target.classList.add("on");
+  currentPage=1;
   renderCharacters();
 });
-document.getElementById("regionFilter").addEventListener("change",function(e){filterRegion=e.target.value;renderCharacters();});
-document.getElementById("nameFilter").addEventListener("input",function(e){filterName=e.target.value;renderCharacters();});
-document.getElementById("addBtn").addEventListener("click",function(){create("characters",newChar({})).then(renderCharacters);});
+document.getElementById("regionFilter").addEventListener("change",function(e){filterRegion=e.target.value;currentPage=1;renderCharacters();});
+document.getElementById("nameFilter").addEventListener("input",function(e){filterName=e.target.value;currentPage=1;renderCharacters();});
+document.getElementById("sortFilter").addEventListener("change",function(e){filterSort=e.target.value;currentPage=1;renderCharacters();});
+document.getElementById("addBtn").addEventListener("click",function(){
+  var rs=document.getElementById("ncRegion");
+  rs.innerHTML='';
+  regionsNames.forEach(function(r){ rs.innerHTML+='<option>'+r+'</option>'; });
+  document.getElementById("ncName").value="";
+  document.getElementById("ncLevel").value="1";
+  document.getElementById("ncStatus").value="not_started";
+  document.getElementById("ncWeapon").value="";
+  document.getElementById("ncTalent").value="";
+  document.getElementById("ncWeaponLevel").value="1";
+  document.getElementById("ncRefine").value="1";
+  document.getElementById("ncWeaponStatus").value="not_started";
+  document.getElementById("ncTB").value="1";
+  document.getElementById("ncTS").value="1";
+  document.getElementById("ncTBurst").value="1";
+  var as=document.getElementById("ncAscStat");
+  as.innerHTML='<option value="">—</option>'+selOpts("",ASC_STATS);
+  as.value="";
+  ncImageUrl="";
+  setNcImage("");
+  ART_SLOTS.forEach(function(slot){
+    var el=document.getElementById("ncArt_"+slot.key);
+    if(el) el.value="";
+  });
+  populateCharModalLists();
+  document.getElementById("charModal").classList.add("open");
+  document.getElementById("ncName").focus();
+});
+
+var ncImageUrl="";
+document.getElementById("ncImgBtn").addEventListener("click",function(){
+  var inp=document.getElementById("ncFileInput");
+  inp.value="";
+  inp.onchange=function(){
+    var file=inp.files[0];
+    if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      fetch("/api/upload",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:ev.target.result,name:file.name})})
+        .then(function(r){return r.json();})
+        .then(function(resp){ if(resp.url) setNcImage(resp.url); });
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+});
+document.getElementById("ncImgUrl").addEventListener("input",function(){
+  setNcImage(this.value.trim());
+});
+document.getElementById("ncImgClear").addEventListener("click",function(){
+  setNcImage("");
+});
+function setNcImage(url){
+  ncImageUrl=url;
+  var p=document.getElementById("ncImgPrev");
+  p.innerHTML=url?'<img src="'+esc(url)+'" alt="">':'';
+  var iu=document.getElementById("ncImgUrl");
+  if(iu && iu.value!==url) iu.value=url;
+}
+
+var modalListsLoaded=false;
+function populateCharModalLists(){
+  if(!modalListsLoaded){
+    Promise.all([getAll("weapons"),getAll("talents"),getAll("artifacts")]).then(function(r){
+      modalListsLoaded=true;
+      fillCharModalLists(r[0],r[1],r[2]);
+    }).catch(function(e){console.error(e);});
+    return;
+  }
+}
+function fillCharModalLists(wpc,tlc,afc){
+  var ws=document.getElementById("ncWeapon");
+  ws.innerHTML='<option value="">-- None --</option>';
+  wpc.forEach(function(w){ ws.innerHTML+='<option value="'+w.id+'">'+esc(w.name)+'</option>'; });
+  var ts=document.getElementById("ncTalent");
+  ts.innerHTML='<option value="">-- None --</option>';
+  tlc.forEach(function(t){ ts.innerHTML+='<option value="'+t.id+'">'+esc(t.name)+' ('+esc(t.region)+')</option>'; });
+  var slots=document.getElementById("ncArtSlots");
+  slots.innerHTML='';
+  ART_SLOTS.forEach(function(slot){
+    var h='<div class="art-slot"><label>'+slot.label+'</label><select class="form-control form-control-sm" id="ncArt_'+slot.key+'"><option value="">-- None --</option>';
+    afc.forEach(function(a){ h+='<option value="'+a.id+'">'+esc(a.name)+'</option>'; });
+    h+='</select></div>';
+    slots.innerHTML+=h;
+  });
+}
+function closeCharModal(){ document.getElementById("charModal").classList.remove("open"); }
+document.getElementById("charModalClose").addEventListener("click",closeCharModal);
+document.getElementById("charCancelBtn").addEventListener("click",closeCharModal);
+document.getElementById("charModal").addEventListener("click",function(e){ if(e.target===this) closeCharModal(); });
+document.getElementById("ncName").addEventListener("keydown",function(e){ if(e.key==="Enter") document.getElementById("charSaveBtn").click(); });
+document.getElementById("charSaveBtn").addEventListener("click",function(){
+  var name=document.getElementById("ncName").value.trim();
+  if(!name){ alert("Character name is required!"); return; }
+  var d=newChar({
+    name:name,
+    image:ncImageUrl,
+    region:document.getElementById("ncRegion").value,
+    ascStatType:document.getElementById("ncAscStat").value,
+    level:Math.max(1,Math.min(100,parseInt(document.getElementById("ncLevel").value)||1)),
+    status:document.getElementById("ncStatus").value,
+    weaponLevel:Math.max(1,Math.min(90,parseInt(document.getElementById("ncWeaponLevel").value)||1)),
+    weaponRefinement:Math.max(1,Math.min(5,parseInt(document.getElementById("ncRefine").value)||1)),
+    weaponStatus:document.getElementById("ncWeaponStatus").value,
+    talentBasic:Math.max(1,Math.min(12,parseInt(document.getElementById("ncTB").value)||1)),
+    talentSkill:Math.max(1,Math.min(12,parseInt(document.getElementById("ncTS").value)||1)),
+    talentBurst:Math.max(1,Math.min(12,parseInt(document.getElementById("ncTBurst").value)||1))
+  });
+  d.weaponId=document.getElementById("ncWeapon").value;
+  d.talentId=document.getElementById("ncTalent").value;
+  ART_SLOTS.forEach(function(slot){
+    var el=document.getElementById("ncArt_"+slot.key);
+    if(el) d["artSet_"+slot.key]=el.value;
+  });
+  closeCharModal();
+  if(filterToday){
+    filterToday=false;
+    document.querySelectorAll("#todayFilter button").forEach(function(b){ b.classList.remove("on"); if(b.dataset.f==="off") b.classList.add("on"); });
+  }
+  currentPage=1;
+  create("characters",d).then(function(nc){
+    focusCharId=nc.id;
+    renderCharacters();
+  });
+});
 
 function refreshRegionSelect(selected){
   regionsToSelect(document.getElementById("regionFilter"), selected||filterRegion, true);

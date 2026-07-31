@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Adventurer's Log — Weapon Materials</title>
+<title>Adventurer's Log</title>
+<link rel="icon" href="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/main.css">
@@ -29,7 +30,7 @@
 
 <nav class="main-nav">
   <div class="nav-inner">
-    <a href="../index.html" class="nav-brand">✦ Adventurer's Log</a>
+    <a href="../index.html" class="nav-brand"><img src="https://static.wikia.nocookie.net/gensin-impact/images/9/9d/Talent_Master_Adventurer.png/revision/latest?cb=20260408033526" alt=""> Adventurer's Log</a>
     <div class="nav-links">
       <a href="../index.html">Dashboard</a>
       <a href="../talents/talents.html">Talents</a>
@@ -38,6 +39,9 @@
       <a href="../weapons/weapons.html">Weapons</a>
       <a href="../characters/characters.html">Characters</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -138,6 +142,8 @@
 </div>
 
 <script src="../js/data.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/table.js"></script>
 <script>
 var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var DS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -220,8 +226,8 @@ function render(){
       for(var d=0;d<7;d++){dh+='<span class="day-badge '+(t.days.indexOf(d)!==-1?"on":"off")+'">'+DS[d]+'</span>';}
       h+='<tr>';
       h+='<td><div style="position:relative;display:inline-block"><span class="img-thumb" data-id="'+t.id+'" data-collection="weapon-materials" data-image="'+(t.image||'')+'" style="cursor:pointer">'+(t.image?'<img src="'+t.image+'" alt="">':'<span>?</span>')+'</span><button class="img-upload-trigger" data-id="'+t.id+'" data-collection="weapon-materials" style="position:absolute;bottom:-4px;right:-4px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg,#080c1a);background:var(--accent);color:#000;font-size:10px;line-height:12px;text-align:center;padding:0;cursor:pointer;font-weight:700">+</button></div></td>';
-      h+='<td>'+(t.domain||'—')+'</td><td>'+(t.name||'—')+'</td><td>'+t.region+'</td><td><div class="day-indicator">'+dh+'</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px;">'+dl+'</div></td>';
-      h+='<td><button class="btn btn-ghost btn-sm edit-btn" data-id="'+t.id+'">Edit</button> <button class="btn btn-danger btn-sm del-btn" data-id="'+t.id+'">Delete</button></td></tr>';
+      h+='<td>'+(t.domain||'—')+'</td><td>'+(t.name||'—')+'</td><td>'+t.region+'</td><td class="days-cell"><div class="day-indicator">'+dh+'</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px;">'+dl+'</div></td>';
+      h+='<td><button class="btn btn-ghost btn-sm edit-btn" data-id="'+t.id+'">Edit</button><button class="btn btn-danger btn-sm del-btn" data-id="'+t.id+'">Delete</button></td></tr>';
     }
     h+='</tbody></table></div>';
     h+=buildPagination(currentPage, totalPages);

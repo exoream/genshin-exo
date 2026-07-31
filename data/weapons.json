@@ -13,6 +13,7 @@
       "defense": 0
     },
     "materialId": "",
-    "statType": "Physical DMG%"
+    "statType": "Physical DMG%",
+    "type": "Sword"
   }
 ]
