@@ -4,11 +4,15 @@
     "domain": "Domain Of Forgery",
     "region": "Mondstadt",
     "name": "Decarabian",
-    "image": "",
+    "image": "https://img.game8.co/3316428/1dce3fa6deaba7dc1e2935b55f04dd69.png/show",
     "days": [
       1,
       2,
-      4
+      3,
+      4,
+      5,
+      6,
+      0
     ]
   }
 ]

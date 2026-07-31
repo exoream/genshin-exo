@@ -83,7 +83,19 @@ input[type=number]{-moz-appearance:textfield}
 .hd-bot .st-sel{font-size:11px;color:rgba(255,255,255,0.6);background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:3px;padding:3px 22px 3px 5px;font-family:inherit;cursor:pointer;flex:1 1 auto;min-width:0}
 .hd-top .cn-sel{font-size:11px;color:var(--accent);font-weight:700;background:rgba(8,12,26,0.65);border:1px solid rgba(212,168,67,0.35);border-radius:3px;padding:3px 18px 3px 5px;font-family:inherit;cursor:pointer;flex-shrink:0}
 
-.st-badge{position:absolute;top:8px;left:8px;z-index:2;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;transition:.15s;border:1px solid transparent;font-family:var(--font-body);text-transform:capitalize;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-shadow:0 0 6px rgba(0,0,0,0.8);min-width:114px}
+.hd-top-row{position:absolute;top:10px;left:10px;right:44px;z-index:2;display:flex;align-items:center;gap:6px}
+.el-badge{width:26px;height:26px;flex-shrink:0;border-radius:50%;background:rgba(8,12,26,0.85);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:3px;box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.el-badge img{width:100%;height:100%;object-fit:contain}
+
+.el-pick{display:flex;flex-wrap:wrap;gap:6px}
+.el-pick .el-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:.15s;padding:0}
+.el-pick .el-btn:hover{transform:scale(1.1);border-color:var(--accent)}
+.el-pick .el-btn.on{background:rgba(212,168,67,0.18);border-color:var(--accent);box-shadow:0 0 0 2px rgba(212,168,67,0.35)}
+.el-pick .el-btn img{width:22px;height:22px;object-fit:contain}
+.el-pick .el-btn.el-clear{font-size:12px;color:var(--text-dim)}
+.el-pick .el-btn.el-clear.on{color:var(--danger);border-color:var(--danger);background:rgba(239,68,68,0.12)}
+
+.st-badge{position:relative;display:flex;align-items:center;justify-content:center;gap:5px;width:104px;height:28px;padding:0 12px;box-sizing:border-box;border-radius:20px;font-size:11px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;transition:.15s;border:1px solid transparent;font-family:var(--font-body);text-transform:capitalize;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-shadow:0 0 6px rgba(0,0,0,0.8);min-width:0;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
 .st-badge.c{background:rgba(8,12,26,0.85);color:#34d399;border-color:rgba(52,211,153,0.5)}
 .st-badge.p{background:rgba(8,12,26,0.85);color:#fbbf24;border-color:rgba(251,191,36,0.5)}
 .st-badge.n{background:rgba(8,12,26,0.85);color:#8891b0;border-color:rgba(136,145,176,0.3)}
@@ -93,9 +105,7 @@ input[type=number]{-moz-appearance:textfield}
 .st-badge.n .dot{background:var(--text-muted)}
 .st-badge:hover{transform:scale(1.05)}
 
-.farm-i{position:absolute;top:8px;left:124px;z-index:2;display:flex;align-items:center;gap:4px;padding:7px 14px;background:rgba(8,12,26,0.85);border-radius:20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08)}
-.farm-i .fi{font-size:12px;cursor:default;line-height:1;transition:.12s}
-.farm-i .fi:hover{transform:scale(1.2)}
+.ms-h .today-badge{margin-left:auto;font-size:9px;font-weight:700;color:#34d399;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);border-radius:10px;padding:2px 7px;text-transform:uppercase;letter-spacing:.05em;line-height:1;white-space:nowrap;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 
 /* ── RIGHT CONTENT PANEL ── */
 .char-body{flex:1;padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden;min-width:0}
@@ -114,6 +124,12 @@ input[type=number]{-moz-appearance:textfield}
 .wp-r .wp-d input[type=number]{width:32px;text-align:center;font-size:11px;padding:3px 2px;height:auto;flex-shrink:0}
 .wp-r .wp-d .dr{font-weight:700;color:var(--accent);font-size:11px;margin-left:1px;flex-shrink:0}
 .wp-r .wp-d select{min-width:0;font-size:10px;padding:3px 4px;flex:1 1 auto;width:auto}
+.wp-mat{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(37,45,74,0.35);min-width:0}
+.wp-mat .wm-img{width:28px;height:28px;flex-shrink:0;border-radius:5px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:13px}
+.wp-mat .wm-img img{width:100%;height:100%;object-fit:cover}
+.wp-mat .wm-i{min-width:0;display:flex;flex-direction:column;gap:1px}
+.wp-mat .wm-l{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)}
+.wp-mat .wm-n{font-size:11px;font-weight:600;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .tl-g{display:flex;align-items:center;gap:10px;width:100%}
 .tl-t-lg{width:48px;height:48px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:18px;color:var(--text-muted)}
@@ -247,6 +263,19 @@ input[type=number]{-moz-appearance:textfield}
           <select class="form-control" id="ncRegion"></select>
         </div>
         <div class="form-group">
+          <label>Element</label>
+          <div class="el-pick" id="ncElement">
+            <button type="button" class="el-btn" data-el="pyro" title="Pyro"><img src="https://sunderarmor.com/GENSHIN/Elements/Element_Pyro.png" alt="Pyro"></button>
+            <button type="button" class="el-btn" data-el="hydro" title="Hydro"><img src="https://sunderarmor.com/GENSHIN/Elements/Element_Hydro.png" alt="Hydro"></button>
+            <button type="button" class="el-btn" data-el="anemo" title="Anemo"><img src="https://sunderarmor.com/GENSHIN/Elements/Element_Anemo.png" alt="Anemo"></button>
+            <button type="button" class="el-btn" data-el="electro" title="Electro"><img src="https://sunderarmor.com/GENSHIN/Elements/Element_Electro.png" alt="Electro"></button>
+            <button type="button" class="el-btn" data-el="dendro" title="Dendro"><img src="https://sunderarmor.com/GENSHIN/Elements/Element_Dendro.png" alt="Dendro"></button>
+            <button type="button" class="el-btn" data-el="cryo" title="Cryo"><img src="https://sunderarmor.com/GENSHIN/Elements/Element_Cryo.png" alt="Cryo"></button>
+            <button type="button" class="el-btn" data-el="geo" title="Geo"><img src="https://sunderarmor.com/GENSHIN/Elements/Element_Geo.png" alt="Geo"></button>
+            <button type="button" class="el-btn el-clear" data-el="" title="None">✕</button>
+          </div>
+        </div>
+        <div class="form-group">
           <label>Main Stat</label>
           <select class="form-control" id="ncAscStat"></select>
         </div>
@@ -356,6 +385,8 @@ input[type=number]{-moz-appearance:textfield}
 <script>
 var regionsNames = []; var regionsData = [];
 var ASC_STATS = ["ATK%","HP%","DEF%","CRIT Rate%","CRIT DMG%","Energy Recharge%","Elemental Mastery","Healing Bonus%","Physical DMG%"];
+var EL_URLS = {pyro:"https://sunderarmor.com/GENSHIN/Elements/Element_Pyro.png",hydro:"https://sunderarmor.com/GENSHIN/Elements/Element_Hydro.png",anemo:"https://sunderarmor.com/GENSHIN/Elements/Element_Anemo.png",electro:"https://sunderarmor.com/GENSHIN/Elements/Element_Electro.png",dendro:"https://sunderarmor.com/GENSHIN/Elements/Element_Dendro.png",cryo:"https://sunderarmor.com/GENSHIN/Elements/Element_Cryo.png",geo:"https://sunderarmor.com/GENSHIN/Elements/Element_Geo.png"};
+var EL_NAMES = {pyro:"Pyro",hydro:"Hydro",anemo:"Anemo",electro:"Electro",dendro:"Dendro",cryo:"Cryo",geo:"Geo"};
 var ART_SLOTS = [
   {key:"flower",label:"Flower"},
   {key:"plume",label:"Plume"},
@@ -370,6 +401,7 @@ var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturda
 
 function newChar(d){
   var o={name:d.name||"",image:d.image||"",region:d.region||(regionsNames[0]||""),level:d.level||1,
+    element:d.element||"",
     ascStatType:d.ascStatType||"",
     constellation:d.constellation||0,
     weaponId:d.weaponId||"",weaponLevel:d.weaponLevel||1,weaponRefinement:d.weaponRefinement||1,weaponStatus:d.weaponStatus||"not_started",
@@ -457,14 +489,19 @@ function renderCharacters(){
         var wp=wpc.find(function(x){return x.id===c.weaponId;});
         var tl=tlc.find(function(x){return x.id===c.talentId;});
         var stCls=c.status==="completed"?"c":c.status==="progress"?"p":"n";
-        var tlToday=c.talentId && tl && tl.days && tl.days.indexOf(today)!==-1;
-        var wpToday=c.weaponId && wp && wp.materialId && (function(){var wm=wmc.find(function(x){return x.id===wp.materialId;});return wm&&wm.days&&wm.days.indexOf(today)!==-1;})();
+        var tlToday=c.status!=="completed" && c.talentId && tl && tl.days && tl.days.indexOf(today)!==-1;
+        var wm=c.weaponId && wp && wp.materialId ? wmc.find(function(x){return x.id===wp.materialId;}) : null;
+        var wpToday=c.weaponStatus!=="completed" && wm && wm.days && wm.days.indexOf(today)!==-1;
 
         var card=document.createElement("div");card.className="char-card";card.setAttribute("data-id",c.id);
         var h='<div class="char-head">'+
           '<div class="av-wrap">'+
             '<div class="char-avatar">'+(c.image?'<img src="'+esc(c.image)+'" alt="">':esc(c.name).charAt(0).toUpperCase()||'?')+'</div>'+
             '<div class="av-up" title="Upload image">+</div>'+
+          '</div>'+
+          '<div class="hd-top-row">'+
+          (c.element&&EL_URLS[c.element]?'<span class="el-badge" title="'+EL_NAMES[c.element]+'"><img src="'+EL_URLS[c.element]+'" alt="'+EL_NAMES[c.element]+'"></span>':'')+
+          '<button class="st-badge '+stCls+'"><span class="dot"></span><span>'+statusLabel(c.status)+'</span></button>'+
           '</div>'+
           '<div class="hd-body">'+
             '<div class="hd-top">'+
@@ -477,18 +514,13 @@ function renderCharacters(){
               '<span class="lv-dsp">Lv <input type="number" min="1" max="100" value="'+c.level+'" data-field="level"></span>'+
             '</div>'+
           '</div>'+
-          '<button class="st-badge '+stCls+'"><span class="dot"></span><span>'+statusLabel(c.status)+'</span></button>'+
-          (tlToday||wpToday?'<span class="farm-i">':'')+
-          (tlToday?'<span class="fi fi-t" title="Talent available today">📖</span>':'')+
-          (wpToday?'<span class="fi fi-w" title="Weapon material available today">⚔️</span>':'')+
-          (tlToday||wpToday?'</span>':'')+
         '</div>';
 
         h+='<div class="char-body">';
 
         // ── Weapon (big image left, details right) ──
         h+='<div class="msec">'+
-          '<div class="ms-h">⚔️ Weapon</div>'+
+          '<div class="ms-h">⚔️ Weapon'+(wpToday?'<span class="today-badge" title="Available today">Today</span>':'')+'</div>'+
           '<div class="wp-g">'+
             '<div class="wp-t-lg">'+(wp&&wp.image?'<img src="'+esc(wp.image)+'" alt="">':(wp?'⚔️':'?'))+'</div>'+
             '<div class="wp-r">'+
@@ -503,11 +535,13 @@ function renderCharacters(){
                 '</select>'+
               '</div>'+
             '</div>'+
-          '</div></div>';
+          '</div>'+
+          (wp&&wm?'<div class="wp-mat"><div class="wm-img">'+(wm.image?'<img src="'+esc(wm.image)+'" alt="">':'🪨')+'</div><div class="wm-i"><span class="wm-l">Material</span><span class="wm-n" title="'+esc(wm.name)+'">'+esc(wm.name)+'</span></div></div>':'')+
+          '</div>';
 
         // ── Talents ──
         h+='<div class="msec">'+
-          '<div class="ms-h">📖 Talents</div>'+
+          '<div class="ms-h">📖 Talents'+(tlToday?'<span class="today-badge" title="Available today">Today</span>':'')+'</div>'+
             '<div class="tl-g">'+
               '<div class="tl-t-lg">'+(tl&&tl.image?'<img src="'+esc(tl.image)+'" alt="">':(tl?'📖':'?'))+'</div>'+
               '<div class="tl-r">'+
@@ -518,7 +552,7 @@ function renderCharacters(){
                   '<div class="t3"><div class="t3n"><input type="number" min="1" max="12" value="'+(c.talentBurst||1)+'" data-field="talentBurst"></div><div class="t3l">Burst</div></div>'+
                 '</div>'+
               '</div>'+
-            '</div></div>';
+          '</div></div>';
 
         // ── Artifacts (simplified: set only) ──
         h+='<div class="sec-h">💠 Artifacts</div><div class="alist">';
@@ -560,7 +594,7 @@ function renderCharacters(){
         });
         function saveImg(cc,url){
           cc.image=url;
-          var obj={}; ["name","image","region","level","ascStatType","constellation","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=cc[k];});
+          var obj={}; ["name","image","region","level","ascStatType","constellation","element","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=cc[k];});
           ART_SLOTS.forEach(function(slot){obj["artSet_"+slot.key]=cc["artSet_"+slot.key];});
           update("characters",cc.id,obj).then(function(){renderCharacters();});
         }
@@ -577,7 +611,7 @@ function renderCharacters(){
             if(["talentBasic","talentSkill","talentBurst"].indexOf(f)!==-1) v=Math.max(1,Math.min(12,parseInt(v)||1));
             c[f]=v;
             var obj={};
-            ["name","image","region","level","ascStatType","constellation","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=c[k];});
+            ["name","image","region","level","ascStatType","constellation","element","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=c[k];});
             ART_SLOTS.forEach(function(slot){obj["artSet_"+slot.key]=c["artSet_"+slot.key];});
             update("characters",c.id,obj).then(function(){renderCharacters();});
           });
@@ -588,7 +622,7 @@ function renderCharacters(){
           var order=["not_started","progress","completed"];
           var idx=order.indexOf(c.status);
           c.status=order[(idx+1)%3];
-          var obj={}; ["name","image","region","level","ascStatType","constellation","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=c[k];});
+          var obj={}; ["name","image","region","level","ascStatType","constellation","element","weaponId","weaponLevel","weaponRefinement","weaponStatus","talentId","talentBasic","talentSkill","talentBurst","status"].forEach(function(k){obj[k]=c[k];});
           ART_SLOTS.forEach(function(slot){obj["artSet_"+slot.key]=c["artSet_"+slot.key];});
           update("characters",c.id,obj).then(function(){renderCharacters();});
         });
@@ -698,6 +732,7 @@ document.getElementById("addBtn").addEventListener("click",function(){
   document.getElementById("ncName").value="";
   document.getElementById("ncLevel").value="1";
   document.getElementById("ncConstellation").value="0";
+  document.querySelectorAll("#ncElement .el-btn").forEach(function(b){b.classList.remove("on");});
   document.getElementById("ncStatus").value="not_started";
   document.getElementById("ncWeapon").value="";
   document.getElementById("ncTalent").value="";
@@ -721,6 +756,13 @@ document.getElementById("addBtn").addEventListener("click",function(){
   document.getElementById("ncName").focus();
 });
 
+document.getElementById("ncElement").addEventListener("click",function(e){
+  var b=e.target.closest(".el-btn");
+  if(!b) return;
+  if(b.classList.contains("on")){ b.classList.remove("on"); return; }
+  document.querySelectorAll("#ncElement .el-btn").forEach(function(x){x.classList.remove("on");});
+  b.classList.add("on");
+});
 var ncImageUrl="";
 document.getElementById("ncImgBtn").addEventListener("click",function(){
   var inp=document.getElementById("ncFileInput");
@@ -796,6 +838,7 @@ document.getElementById("charSaveBtn").addEventListener("click",function(){
     ascStatType:document.getElementById("ncAscStat").value,
     level:Math.max(1,Math.min(100,parseInt(document.getElementById("ncLevel").value)||1)),
     constellation:Math.max(0,Math.min(6,parseInt(document.getElementById("ncConstellation").value)||0)),
+    element:(document.querySelector("#ncElement .el-btn.on")||{dataset:{el:""}}).dataset.el,
     status:document.getElementById("ncStatus").value,
     weaponLevel:Math.max(1,Math.min(90,parseInt(document.getElementById("ncWeaponLevel").value)||1)),
     weaponRefinement:Math.max(1,Math.min(5,parseInt(document.getElementById("ncRefine").value)||1)),
