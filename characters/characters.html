@@ -440,8 +440,9 @@ function isFarmableToday(c, wpc, tlc, wmc){
 var today = new Date().getDay();
 
 function renderCharacters(){
-  Promise.all([getAll("characters"),getAll("weapons"),getAll("talents"),getAll("artifacts"),getAll("weapon-materials")]).then(function(r){
-    var all=r[0], wpc=r[1], tlc=r[2], afc=r[3], wmc=r[4];
+  Promise.all([getAll("characters"),getAll("weapons"),getAll("talents"),getAll("artifacts"),getAll("weapon-materials"),getAll("weapon-stats")]).then(function(r){
+    var all=r[0], wpc=r[1], tlc=r[2], afc=r[3], wmc=r[4], wsc=r[5];
+    var statNames=(wsc&&wsc.length)?wsc.map(function(s){return s.name;}):ASC_STATS;
     wpc.sort(function(a,b){return a.name.localeCompare(b.name);});
     tlc.sort(function(a,b){return a.name.localeCompare(b.name);});
     afc.sort(function(a,b){return a.name.localeCompare(b.name);});
@@ -510,7 +511,7 @@ function renderCharacters(){
             '</div>'+
             '<div class="hd-bot">'+
               '<select class="rg-sel" data-field="region">'+regionsNames.map(function(r2){return '<option'+(c.region===r2?' selected':'')+'>'+r2+'</option>';}).join('')+'</select>'+
-              '<select class="st-sel" data-field="ascStatType"><option value="">—</option>'+selOpts(c.ascStatType,ASC_STATS)+'</select>'+
+              '<select class="st-sel" data-field="ascStatType"><option value="">—</option>'+selOpts(c.ascStatType,statNames)+'</select>'+
               '<span class="lv-dsp">Lv <input type="number" min="1" max="100" value="'+c.level+'" data-field="level"></span>'+
             '</div>'+
           '</div>'+
@@ -743,8 +744,12 @@ document.getElementById("addBtn").addEventListener("click",function(){
   document.getElementById("ncTS").value="1";
   document.getElementById("ncTBurst").value="1";
   var as=document.getElementById("ncAscStat");
-  as.innerHTML='<option value="">—</option>'+selOpts("",ASC_STATS);
-  as.value="";
+  as.innerHTML='<option value="">—</option>';
+  getAll("weapon-stats").then(function(ws){
+    var names=(ws&&ws.length)?ws.map(function(s){return s.name;}):ASC_STATS;
+    as.innerHTML='<option value="">—</option>'+selOpts("",names);
+    as.value="";
+  });
   ncImageUrl="";
   setNcImage("");
   ART_SLOTS.forEach(function(slot){
