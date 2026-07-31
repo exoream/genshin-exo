@@ -644,9 +644,9 @@
     "artSet_sands": ""
   },
   {
-    "talentId": "ndhhmgnkowqtzd",
+    "talentId": "mzqzzdhhztetnw",
     "talentBurst": 9,
-    "ascStatType": "HP%",
+    "ascStatType": "Energy Recharge%",
     "artSet_goblet": "",
     "talentBasic": 6,
     "artSet_flower": "",
@@ -664,7 +664,8 @@
     "image": "",
     "status": "not_started",
     "artSet_circlet": "",
-    "artSet_sands": ""
+    "artSet_sands": "",
+    "constellation": 5
   },
   {
     "talentId": "ngu5ytjlotatow",
@@ -690,7 +691,7 @@
     "artSet_sands": ""
   },
   {
-    "talentId": "ndhhmgnkowqtzd",
+    "talentId": "mzqzzdhhztetnw",
     "talentBurst": 7,
     "ascStatType": "",
     "artSet_goblet": "",
@@ -736,7 +737,7 @@
     "artSet_sands": ""
   },
   {
-    "talentId": "ndhhmgnkowqtzd",
+    "talentId": "nwzlm2exowmtnz",
     "talentBurst": 8,
     "ascStatType": "",
     "artSet_goblet": "",
@@ -914,7 +915,7 @@
     "level": 0,
     "talentSkill": 4,
     "weaponLevel": 0,
-    "image": "",
+    "image": "/uploads/ms8lmz8a_okzh.png",
     "status": "not_started",
     "artSet_circlet": "",
     "artSet_sands": ""
@@ -1768,7 +1769,7 @@
   {
     "id": "ms8f76rtgtr6bg",
     "name": "GAY",
-    "image": "/uploads/ms8f75v3_1e4e.jpg",
+    "image": "/uploads/ms8lgkk6_onu0.jpg",
     "region": "Mondstadt",
     "level": 90,
     "ascStatType": "ATK%",
@@ -1776,7 +1777,7 @@
     "weaponLevel": 90,
     "weaponRefinement": 2,
     "weaponStatus": "progress",
-    "talentId": "ztiyzte3ntetot",
+    "talentId": "ngu5ytjlotatow",
     "talentBasic": 10,
     "talentSkill": 10,
     "talentBurst": 10,
@@ -1785,6 +1786,8 @@
     "artSet_plume": "ms6fax85718j12",
     "artSet_sands": "ms6el7oljbr0tl",
     "artSet_goblet": "ms6fax85718j12",
-    "artSet_circlet": "ms6el7oljbr0tl"
+    "artSet_circlet": "ms6el7oljbr0tl",
+    "constellation": 3,
+    "imgPos": "top"
   }
 ]
