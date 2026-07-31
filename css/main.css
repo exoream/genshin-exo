@@ -52,11 +52,7 @@ a:hover{color:var(--accent-hover)}
   font-size:15px;letter-spacing:.06em;
   color:var(--accent) !important;
   margin-right:auto;white-space:nowrap;
-  display:flex;align-items:center;gap:8px;
 }
-.nav-brand img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0}
-.login-card .brand{display:flex;align-items:center;justify-content:center;gap:8px}
-.login-card .brand img{width:32px;height:32px;border-radius:6px;object-fit:cover}
 .nav-links{display:flex;gap:4px}
 .nav-links a{
   padding:6px 14px;border-radius:var(--radius-sm);
